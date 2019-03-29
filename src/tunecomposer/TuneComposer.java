@@ -25,7 +25,7 @@ import javax.sound.midi.ShortMessage;
 
 /**
  * This JavaFX app lets the user play scales.
- * @author Ian Stewart, Ian Hawkins, Angie Phyllis Mead, Melissa Kohl
+ * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl teamalpha
  */
 public class TuneComposer extends Application {
 
