@@ -62,13 +62,16 @@
                                             shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                <MenuItem onAction="#handleDelete" 
-                          text="Delete">
+                <MenuItem onAction="#handleDelete" text="Delete">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="BACK_SPACE" 
                                             control="DOWN" meta="UP" shift="UP" 
                                             shortcut="UP" />
                      </accelerator>
+                  </MenuItem>
+                  <MenuItem text="Group">
+                  </MenuItem>
+                  <MenuItem text="Ungroup">
                   </MenuItem>
               </items>
             </Menu>
