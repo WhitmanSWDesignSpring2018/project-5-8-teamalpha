@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
  * Note class creates a Rectangle representing the note to be played
  * @author Ian Hawkins, Madi Crowley, Ian Stewart, Melissa Kohl
  */
-public class Note {
+public class Note implements Playable {
     
     /**
      * Constants for playing note in MidiPlayer
@@ -81,6 +81,10 @@ public class Note {
         
         isSelected = true;
     }
+    
+    public double getWidth() {
+        return rectWidth;
+    }
 
     /**
      * Update the last note so we know when to stop the player and red line
@@ -148,9 +152,9 @@ public class Note {
      * While the user is dragging the mouse, move the Rectangle with it
      * @param event mouse drag
      */
-    public void moveNote(MouseEvent event) {
+    public void moveRect(MouseEvent event) {
         noteRect.setX(event.getX() - xOffset);
-        noteRect.setY(event.getY() - yOffset );
+        noteRect.setY(event.getY() - yOffset);
     }
     
     /**
@@ -167,6 +171,7 @@ public class Note {
         
         x_coord = x;
         y_coord = y - (y % RECTHEIGHT);
+        //maybe can fix the snapping up problem with integer division/rounding
         
         noteRect.setX(x_coord);
         noteRect.setY(y_coord);

@@ -27,7 +27,7 @@ public enum Instrument {
         public String toString() {
             switch(this) {
                 case PIANO:         return "piano";
-                case HARPSICHORD:    return "harpsichord";
+                case HARPSICHORD:   return "harpsichord";
                 case MARIMBA:       return "marimba";
                 case CHURCH_ORGAN:  return "church-organ";
                 case ACCORDION:     return "accordion";
