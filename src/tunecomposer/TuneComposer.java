@@ -200,6 +200,16 @@ public class TuneComposer extends Application {
     protected void handleGroup(ActionEvent event) {
         makeGroup();
     }
+    
+    public void unGroup(){
+        //if the group is selected
+        //could you go through the set of gestures here and figure out which ones are selected use isSelected boolean 
+    }
+    
+    @FXML
+    protected void handleUnGroup(ActionEvent event){
+        unGroup(); 
+    }
 
     /**
      * Initializes FXML. Called automatically.
