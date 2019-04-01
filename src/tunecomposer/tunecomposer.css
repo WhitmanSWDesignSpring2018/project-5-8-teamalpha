@@ -33,6 +33,10 @@
     -fx-stroke: #f2c500;
 }
 
+.gesture {
+	-fx-fill: transparent;
+}
+
 .piano {
     -fx-background-color: lightgray;
     -fx-fill: lightgray;

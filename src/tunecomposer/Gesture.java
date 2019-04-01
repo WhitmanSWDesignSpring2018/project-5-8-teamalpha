@@ -53,9 +53,16 @@ public class Gesture implements Playable {
         x_coord = Collections.min(xList);
         y_coord = Collections.min(yList);
         rectHeight = Collections.max(yList) - y_coord + 10;
-        rectWidth = Collections.max(ends);
+        rectWidth = Collections.max(ends) - x_coord;
         
         gestureRect = new Rectangle(x_coord, y_coord, rectWidth, rectHeight);
+        System.out.println(x_coord);
+        System.out.println(y_coord);
+        System.out.println(rectWidth);
+        System.out.println(rectHeight);
+        
+        gestureRect.getStyleClass().addAll("selected", "gesture");
+        gestureRect.setMouseTransparent(false);
         
         isSelected = true;
     }
@@ -89,6 +96,13 @@ public class Gesture implements Playable {
     public void setSelected(boolean selected) {
         isSelected = selected;
         
+        if (selected) {
+        	gestureRect.getStyleClass().clear();
+        	gestureRect.getStyleClass().addAll("selected", "gesture");
+        } else {
+        	gestureRect.getStyleClass().clear();
+        	gestureRect.getStyleClass().addAll("unselected", "gesture");
+        }
         // add or remove selected style class 
         
         contents.forEach((playable) -> {

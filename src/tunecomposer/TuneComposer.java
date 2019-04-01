@@ -180,6 +180,7 @@ public class TuneComposer extends Application {
         System.out.println("selectedPlayables: " + selectedPlayables.size());
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
+        notePane.getChildren().add(group.getRectangle());
         System.out.println("good");
         //selectedPlayables.clear();
     }
@@ -243,8 +244,8 @@ public class TuneComposer extends Application {
             //System.out.println("yes this is happening for some reason");
             isDragSelecting = false;
             selection.endRectangle();
-            selectedPlayables.clear();
-            //when you comment out this ^ things can be grouped but it gets fucked up
+            //selectedPlayables.clear();
+            //when you comment out this ^ things can be grouped but it gets fucked up when you interact with the group in any way
         }
         else if (clickInPane) {
             if (! event.isControlDown()) {
@@ -405,7 +406,7 @@ public class TuneComposer extends Application {
             // Thanks to Paul for suggesting the `intersects` method.
             if(selection.getRectangle().intersects(note.getRectangle().getLayoutBounds())) {
                 selectedPlayables.add(note);
-                System.out.println("did get selected yes:" + selectedPlayables.size());
+                //System.out.println("did get selected yes:" + selectedPlayables.size());
                 note.setSelected(true);
             } else {
                 if(selectedPlayables.contains(note)) {
@@ -430,6 +431,7 @@ public class TuneComposer extends Application {
             }
         });
         allPlayables.removeAll(toDelete);
+        selectedPlayables.clear();
     }
     
     /**
