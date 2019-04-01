@@ -8,13 +8,14 @@ package tunecomposer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 /**
  *
- * @author taylorkm
+ * @author teamalpha
  */
 public class Gesture implements Playable {
     
@@ -35,10 +36,10 @@ public class Gesture implements Playable {
     
     private boolean isSelected;
     
-    private final Set<Playable> contents;
+    private Set<Playable> contents;
     
     public Gesture(Set<Playable> newContents) {
-        contents = newContents;
+        contents = new HashSet<Playable>(newContents); 
         System.out.println("created: " + contents.size());
         
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());
@@ -57,10 +58,6 @@ public class Gesture implements Playable {
         rectWidth = Collections.max(ends) - x_coord;
         
         gestureRect = new Rectangle(x_coord, y_coord, rectWidth, rectHeight);
-//        System.out.println(x_coord);
-//        System.out.println(y_coord);
-//        System.out.println(rectWidth);
-//        System.out.println(rectHeight);
         
         gestureRect.getStyleClass().addAll("selected", "gesture");
         gestureRect.setMouseTransparent(false);
@@ -119,11 +116,12 @@ public class Gesture implements Playable {
         	gestureRect.getStyleClass().addAll("unselected", "gesture");
         }
         
-        System.out.println("contents " + contents.size());
-        System.out.println("y " + y_coord);
-        for (Playable playable : contents) {
-        	playable.setSelected(isSelected);
+        for (Playable playable: contents){
+            playable.setSelected(isSelected);
         }
+        
+//      System.out.println("contents " + contents.size());
+//      System.out.println("y " + y_coord);
         
         //System.out.println(gestureRect.getY());
         
@@ -159,7 +157,7 @@ public class Gesture implements Playable {
         double y = event.getY() - yOffset;
         
         x_coord = x;
-        y_coord = y - (y % rectHeight);
+        y_coord = y - (y % 10);
         
         gestureRect.setX(x_coord);
         gestureRect.setY(y_coord);
