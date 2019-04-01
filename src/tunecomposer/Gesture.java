@@ -6,6 +6,7 @@
 package tunecomposer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import javafx.scene.input.MouseEvent;
@@ -34,11 +35,11 @@ public class Gesture implements Playable {
     
     private boolean isSelected;
     
-    private Set<Playable> contents;
+    private final Set<Playable> contents;
     
     public Gesture(Set<Playable> newContents) {
         contents = newContents;
-        //System.out.println("contents: " + contents.size());
+        System.out.println("created: " + contents.size());
         
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());
         ArrayList<Double> yList = new ArrayList<Double>(contents.size());
@@ -65,6 +66,10 @@ public class Gesture implements Playable {
         gestureRect.setMouseTransparent(false);
         
         isSelected = true;
+    }
+    
+    public Collection getContents() {
+    	return contents;
     }
     
     public double getWidth() {
@@ -94,23 +99,33 @@ public class Gesture implements Playable {
     }
     
     public void setSelected(boolean selected) {
-    	System.out.println(gestureRect.getY());
+    	//System.out.println(gestureRect.getY());
         isSelected = selected;
         
-        contents.forEach((playable) -> {
-            playable.setSelected(isSelected);
-            //System.out.println("leaves: " + selected);
-        });
+//        contents.forEach((playable) -> {
+//        	playable.getRectangle().getStyleClass().addAll("selected");
+//            //playable.setSelected(isSelected);
+//            //System.out.println("leaves: " + selected);
+//        });
         
         if (isSelected) {
         	gestureRect.getStyleClass().clear();
         	gestureRect.getStyleClass().addAll("selected", "gesture");
+//        	contents.forEach((playable) -> {
+//        		playable.setSelected(true);
+//        	});
         } else {
         	gestureRect.getStyleClass().clear();
         	gestureRect.getStyleClass().addAll("unselected", "gesture");
         }
         
-        System.out.println(gestureRect.getY());
+        System.out.println("contents " + contents.size());
+        System.out.println("y " + y_coord);
+        for (Playable playable : contents) {
+        	playable.setSelected(isSelected);
+        }
+        
+        //System.out.println(gestureRect.getY());
         
     }
     
@@ -148,6 +163,7 @@ public class Gesture implements Playable {
         
         gestureRect.setX(x_coord);
         gestureRect.setY(y_coord);
+        
     }
     
     public boolean inLastFive(MouseEvent event) { return false; }

@@ -296,11 +296,12 @@ public class TuneComposer extends Application {
         boolean selected = playable.getSelected();
         //System.out.println("selected" + selected);
         if (! control && ! selected) {
-        	System.out.println("if");
             selectAll(false);
             selectedPlayables.clear();
             playable.setSelected(true);
             selectedPlayables.add(playable);
+            System.out.println("selectedPlayables " + selectedPlayables.size());
+            // need to select the contents of a gesture
         } else if (control && ! selected) {
             playable.setSelected(true);
             selectedPlayables.add(playable);
