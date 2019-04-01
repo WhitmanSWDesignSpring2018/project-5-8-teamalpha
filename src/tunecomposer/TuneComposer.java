@@ -177,11 +177,22 @@ public class TuneComposer extends Application {
     }
     
     public void makeGroup() {
-        System.out.println("selectedPlayables: " + selectedPlayables.size());
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
         notePane.getChildren().add(group.getRectangle());
-        System.out.println("good");
+        
+        group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
+            handleNoteClick(pressedEvent, group);
+            handleNotePress(pressedEvent, group);
+        });
+        
+        group.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
+            handleNoteDrag(dragEvent);
+        });
+        
+        group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
+            handleNoteStopDragging(releaseEvent);
+        });
         //selectedPlayables.clear();
     }
     
@@ -241,15 +252,14 @@ public class TuneComposer extends Application {
             stopPlaying();
         }
         else if (isDragSelecting){
-            //System.out.println("yes this is happening for some reason");
             isDragSelecting = false;
             selection.endRectangle();
-            //selectedPlayables.clear();
-            //when you comment out this ^ things can be grouped but it gets fucked up when you interact with the group in any way
         }
         else if (clickInPane) {
-            if (! event.isControlDown()) {
+        	//System.out.println("else 2");
+            if (!event.isControlDown()) {
                 selectAll(false);
+                selectedPlayables.clear();
             }
             
             Instrument instrument = getInstrument();
@@ -284,12 +294,16 @@ public class TuneComposer extends Application {
         clickInPane = false;
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
+        //System.out.println("selected" + selected);
         if (! control && ! selected) {
+        	System.out.println("if");
             selectAll(false);
+            selectedPlayables.clear();
             playable.setSelected(true);
-            
-        } else if ( control && ! selected) {
+            selectedPlayables.add(playable);
+        } else if (control && ! selected) {
             playable.setSelected(true);
+            selectedPlayables.add(playable);
         } else if (control && selected) {
             playable.setSelected(false);
         }
@@ -392,7 +406,7 @@ public class TuneComposer extends Application {
     }
     
     /**
-     * Continue to update notes throughout drag. Called from FXML
+     * Continue to update notes throughout drag.
      * @param event Current value of MouseEvent
      */
     private void handleSelectionContinueDrag(MouseEvent event) {

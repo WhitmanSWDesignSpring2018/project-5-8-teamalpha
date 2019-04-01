@@ -38,7 +38,7 @@ public class Gesture implements Playable {
     
     public Gesture(Set<Playable> newContents) {
         contents = newContents;
-        System.out.println("contents: " + contents.size());
+        //System.out.println("contents: " + contents.size());
         
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());
         ArrayList<Double> yList = new ArrayList<Double>(contents.size());
@@ -56,10 +56,10 @@ public class Gesture implements Playable {
         rectWidth = Collections.max(ends) - x_coord;
         
         gestureRect = new Rectangle(x_coord, y_coord, rectWidth, rectHeight);
-        System.out.println(x_coord);
-        System.out.println(y_coord);
-        System.out.println(rectWidth);
-        System.out.println(rectHeight);
+//        System.out.println(x_coord);
+//        System.out.println(y_coord);
+//        System.out.println(rectWidth);
+//        System.out.println(rectHeight);
         
         gestureRect.getStyleClass().addAll("selected", "gesture");
         gestureRect.setMouseTransparent(false);
@@ -94,20 +94,24 @@ public class Gesture implements Playable {
     }
     
     public void setSelected(boolean selected) {
+    	System.out.println(gestureRect.getY());
         isSelected = selected;
         
-        if (selected) {
+        contents.forEach((playable) -> {
+            playable.setSelected(isSelected);
+            //System.out.println("leaves: " + selected);
+        });
+        
+        if (isSelected) {
         	gestureRect.getStyleClass().clear();
         	gestureRect.getStyleClass().addAll("selected", "gesture");
         } else {
         	gestureRect.getStyleClass().clear();
         	gestureRect.getStyleClass().addAll("unselected", "gesture");
         }
-        // add or remove selected style class 
         
-        contents.forEach((playable) -> {
-            playable.setSelected(selected);
-        });
+        System.out.println(gestureRect.getY());
+        
     }
     
     /**

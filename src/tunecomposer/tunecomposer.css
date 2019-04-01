@@ -3,8 +3,8 @@
  */
 
 #root-pane {
-    -fx-pref-width: 2000;
-    -fx-pref-height: 1280;
+    -fx-pref-width: 800;
+    -fx-pref-height: 500;
 }
 
 .row-divider {
