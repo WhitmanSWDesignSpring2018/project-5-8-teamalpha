@@ -60,7 +60,7 @@ public class TuneComposer extends Application {
     /**
      * List of notes being selected by the selection area
      */
-    private Set<Playable> selectedPlayables;
+    private static Set<Playable> selectedPlayables;
 
     /**
      * The background of the application.
@@ -193,7 +193,6 @@ public class TuneComposer extends Application {
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
         });
-        //selectedPlayables.clear();
     }
     
     @FXML
@@ -256,7 +255,6 @@ public class TuneComposer extends Application {
             selection.endRectangle();
         }
         else if (clickInPane) {
-        	//System.out.println("else 2");
             if (!event.isControlDown()) {
                 selectAll(false);
                 selectedPlayables.clear();
@@ -294,14 +292,11 @@ public class TuneComposer extends Application {
         clickInPane = false;
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
-        //System.out.println("selected" + selected);
         if (! control && ! selected) {
             selectAll(false);
             selectedPlayables.clear();
             playable.setSelected(true);
             selectedPlayables.add(playable);
-            System.out.println("selectedPlayables " + selectedPlayables.size());
-            // need to select the contents of a gesture
         } else if (control && ! selected) {
             playable.setSelected(true);
             selectedPlayables.add(playable);
@@ -421,7 +416,6 @@ public class TuneComposer extends Application {
             // Thanks to Paul for suggesting the `intersects` method.
             if(selection.getRectangle().intersects(note.getRectangle().getLayoutBounds())) {
                 selectedPlayables.add(note);
-                //System.out.println("did get selected yes:" + selectedPlayables.size());
                 note.setSelected(true);
             } else {
                 if(selectedPlayables.contains(note)) {
