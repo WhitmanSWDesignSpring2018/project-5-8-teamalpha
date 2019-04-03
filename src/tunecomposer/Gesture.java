@@ -164,6 +164,7 @@ public class Gesture implements Playable {
         
     }
     
+    public boolean isGesture(){return true; }
     public boolean inLastFive(MouseEvent event) { return false; }
     public void setMovingDuration(MouseEvent event) {}
     public void moveDuration(MouseEvent event) {}

@@ -25,7 +25,7 @@ import javax.sound.midi.ShortMessage;
 
 /**
  * This JavaFX app lets the user play scales.
- * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl teamalpha
+ * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl + teamalpha
  */
 public class TuneComposer extends Application {
 
@@ -202,6 +202,27 @@ public class TuneComposer extends Application {
     }
     
     public void unGroup(){
+        ArrayList gestureList = new ArrayList();
+        selectedPlayables.forEach((n) -> {
+            System.out.println("?");
+            if(n.isGesture()){
+                gestureList.add(n);
+                notePane.getChildren().remove(n.getRectangle());   
+            }
+        });
+        /*
+        gestureList.forEach((n)->{
+            if(gestureList.indexOf(n) == gestureList.size()-1){
+                notePane.getChildren().remove(n.getRectangle());
+            }
+            else{
+                gestureList.remove(n);
+            }
+        });
+        */
+        System.out.println(gestureList.size());
+        selectedPlayables.removeAll(gestureList);
+        //delete down here
         //if the group is selected
         //could you go through the set of gestures here and figure out which ones are selected use isSelected boolean 
     }
