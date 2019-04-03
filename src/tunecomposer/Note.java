@@ -220,4 +220,7 @@ public class Note implements Playable {
         noteRect.setWidth(rectWidth);
     }
     
+    public boolean isGesture() {return false;}
+    
+    
 }
