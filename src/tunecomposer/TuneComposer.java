@@ -208,8 +208,8 @@ public class TuneComposer extends Application {
             if(n.isGesture()){
                 gestureList.add(n);
                 notePane.getChildren().remove(n.getRectangle()); 
-                boolean gestureHasBeenRemoved = false; 
-                allPlayables.remove(n); 
+                //only want to do this once 
+                selectedPlayables.remove(n); 
             }    
         });
         //problem because you have to click off the gesture in order to ungroup it
