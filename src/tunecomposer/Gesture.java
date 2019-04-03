@@ -6,14 +6,16 @@
 package tunecomposer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 /**
  *
- * @author taylorkm
+ * @author teamalpha
  */
 public class Gesture implements Playable {
     
@@ -37,8 +39,8 @@ public class Gesture implements Playable {
     private Set<Playable> contents;
     
     public Gesture(Set<Playable> newContents) {
-        contents = newContents;
-        System.out.println("contents: " + contents.size());
+        contents = new HashSet<Playable>(newContents); 
+        System.out.println("created: " + contents.size());
         
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());
         ArrayList<Double> yList = new ArrayList<Double>(contents.size());
@@ -53,11 +55,18 @@ public class Gesture implements Playable {
         x_coord = Collections.min(xList);
         y_coord = Collections.min(yList);
         rectHeight = Collections.max(yList) - y_coord + 10;
-        rectWidth = Collections.max(ends);
+        rectWidth = Collections.max(ends) - x_coord;
         
         gestureRect = new Rectangle(x_coord, y_coord, rectWidth, rectHeight);
         
+        gestureRect.getStyleClass().addAll("selected", "gesture");
+        gestureRect.setMouseTransparent(false);
+        
         isSelected = true;
+    }
+    
+    public Collection getContents() {
+    	return contents;
     }
     
     public double getWidth() {
@@ -87,13 +96,35 @@ public class Gesture implements Playable {
     }
     
     public void setSelected(boolean selected) {
+    	//System.out.println(gestureRect.getY());
         isSelected = selected;
         
-        // add or remove selected style class 
+//        contents.forEach((playable) -> {
+//        	playable.getRectangle().getStyleClass().addAll("selected");
+//            //playable.setSelected(isSelected);
+//            //System.out.println("leaves: " + selected);
+//        });
         
-        contents.forEach((playable) -> {
-            playable.setSelected(selected);
-        });
+        if (isSelected) {
+        	gestureRect.getStyleClass().clear();
+        	gestureRect.getStyleClass().addAll("selected", "gesture");
+//        	contents.forEach((playable) -> {
+//        		playable.setSelected(true);
+//        	});
+        } else {
+        	gestureRect.getStyleClass().clear();
+        	gestureRect.getStyleClass().addAll("unselected", "gesture");
+        }
+        
+        for (Playable playable: contents){
+            playable.setSelected(isSelected);
+        }
+        
+//      System.out.println("contents " + contents.size());
+//      System.out.println("y " + y_coord);
+        
+        //System.out.println(gestureRect.getY());
+        
     }
     
     /**
@@ -126,10 +157,11 @@ public class Gesture implements Playable {
         double y = event.getY() - yOffset;
         
         x_coord = x;
-        y_coord = y - (y % rectHeight);
+        y_coord = y - (y % 10);
         
         gestureRect.setX(x_coord);
         gestureRect.setY(y_coord);
+        
     }
     
     public boolean inLastFive(MouseEvent event) { return false; }

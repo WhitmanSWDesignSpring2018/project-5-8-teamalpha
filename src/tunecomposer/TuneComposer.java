@@ -177,16 +177,38 @@ public class TuneComposer extends Application {
     }
     
     public void makeGroup() {
-        System.out.println("selectedPlayables: " + selectedPlayables.size());
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
-        System.out.println("good");
+        notePane.getChildren().add(group.getRectangle());
+        
+        group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
+            handleNoteClick(pressedEvent, group);
+            handleNotePress(pressedEvent, group);
+        });
+        
+        group.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
+            handleNoteDrag(dragEvent);
+        });
+        
+        group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
+            handleNoteStopDragging(releaseEvent);
+        });
         //selectedPlayables.clear();
     }
     
     @FXML
     protected void handleGroup(ActionEvent event) {
         makeGroup();
+    }
+    
+    public void unGroup(){
+        //if the group is selected
+        //could you go through the set of gestures here and figure out which ones are selected use isSelected boolean 
+    }
+    
+    @FXML
+    protected void handleUnGroup(ActionEvent event){
+        unGroup(); 
     }
 
     /**
@@ -240,15 +262,14 @@ public class TuneComposer extends Application {
             stopPlaying();
         }
         else if (isDragSelecting){
-            //System.out.println("yes this is happening for some reason");
             isDragSelecting = false;
             selection.endRectangle();
-            selectedPlayables.clear();
-            //when you comment out this ^ things can be grouped but it gets fucked up
         }
         else if (clickInPane) {
-            if (! event.isControlDown()) {
+        	//System.out.println("else 2");
+            if (!event.isControlDown()) {
                 selectAll(false);
+                selectedPlayables.clear();
             }
             
             Instrument instrument = getInstrument();
@@ -283,12 +304,17 @@ public class TuneComposer extends Application {
         clickInPane = false;
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
+        //System.out.println("selected" + selected);
         if (! control && ! selected) {
             selectAll(false);
+            selectedPlayables.clear();
             playable.setSelected(true);
-            
-        } else if ( control && ! selected) {
+            selectedPlayables.add(playable);
+            System.out.println("selectedPlayables " + selectedPlayables.size());
+            // need to select the contents of a gesture
+        } else if (control && ! selected) {
             playable.setSelected(true);
+            selectedPlayables.add(playable);
         } else if (control && selected) {
             playable.setSelected(false);
         }
@@ -391,7 +417,7 @@ public class TuneComposer extends Application {
     }
     
     /**
-     * Continue to update notes throughout drag. Called from FXML
+     * Continue to update notes throughout drag.
      * @param event Current value of MouseEvent
      */
     private void handleSelectionContinueDrag(MouseEvent event) {
@@ -405,7 +431,7 @@ public class TuneComposer extends Application {
             // Thanks to Paul for suggesting the `intersects` method.
             if(selection.getRectangle().intersects(note.getRectangle().getLayoutBounds())) {
                 selectedPlayables.add(note);
-                System.out.println("did get selected yes:" + selectedPlayables.size());
+                //System.out.println("did get selected yes:" + selectedPlayables.size());
                 note.setSelected(true);
             } else {
                 if(selectedPlayables.contains(note)) {
@@ -430,6 +456,7 @@ public class TuneComposer extends Application {
             }
         });
         allPlayables.removeAll(toDelete);
+        selectedPlayables.clear();
     }
     
     /**

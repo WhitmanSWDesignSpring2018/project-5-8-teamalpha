@@ -3,8 +3,8 @@
  */
 
 #root-pane {
-    -fx-pref-width: 2000;
-    -fx-pref-height: 1280;
+    -fx-pref-width: 800;
+    -fx-pref-height: 500;
 }
 
 .row-divider {
@@ -31,6 +31,10 @@
 .selection-rect {
     -fx-fill: transparent;
     -fx-stroke: #f2c500;
+}
+
+.gesture {
+	-fx-fill: transparent;
 }
 
 .piano {

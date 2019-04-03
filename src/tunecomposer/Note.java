@@ -127,6 +127,7 @@ public class Note implements Playable {
     public void setSelected(boolean selected) {
         isSelected = selected;
         if (selected) {
+        	//System.out.println("set true");
             noteRect.getStyleClass().clear();
             noteRect.getStyleClass().addAll("selected", 
                                             instrument.toString());
