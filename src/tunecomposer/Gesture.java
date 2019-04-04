@@ -19,6 +19,10 @@ import javafx.scene.shape.Rectangle;
  */
 public class Gesture implements Playable {
     
+    /**
+     * Note fields for creating a gesture rectangle 
+     */
+    
     private final Rectangle gestureRect;
     private double x_coord;
     private double y_coord;
@@ -38,6 +42,10 @@ public class Gesture implements Playable {
     
     private Set<Playable> contents;
     
+      /**
+     * Creates new selected Gesture which is sized based on the coordinates on its contents
+     * @param newContents contents that are selected to be made into a gesture 
+     */
     public Gesture(Set<Playable> newContents) {
         contents = new HashSet<Playable>(newContents); 
         System.out.println("created: " + contents.size());
@@ -65,6 +73,7 @@ public class Gesture implements Playable {
         isSelected = true;
     }
     
+    
     public Collection getContents() {
     	return contents;
     }
@@ -73,17 +82,26 @@ public class Gesture implements Playable {
         return rectWidth;
     }
     
+    /**
+     * Update the last note so we know when to stop the player and red line
+     */
     public void updateLastNote() {
         if (x_coord + rectWidth > lastNote) {
             lastNote = x_coord + rectWidth;
         }
     }
     
+     /**
+     * Get this Gestures's Rectangle object
+     * @return this Gesture's Rectangle
+     */
     public Rectangle getRectangle() {
         return gestureRect;
     }
     
-    
+    /**
+     * Adds this Note to the MidiPlayer
+     */
     public void schedule() {
         contents.forEach((playable) -> {
             playable.schedule();
@@ -91,9 +109,14 @@ public class Gesture implements Playable {
         });
     }
     
+     /**
+     * Checks if this gesture is selected
+     * @return true if gesture is selected, false otherwise
+     */
     public boolean getSelected() {
         return isSelected;
     }
+    
     
     public void setSelected(boolean selected) {
     	//System.out.println(gestureRect.getY());
@@ -129,8 +152,8 @@ public class Gesture implements Playable {
     
     /**
      * When the user presses the mouse to start dragging, calculate the offset
-     * between the upper-left corner of the Rectangle and where the mouse is
-     * in the Rectangle
+     * between the upper-left corner of the Gesture and where the mouse is
+     * in the Gesture
      * @param event mouse click
      */
     public void setMovingCoords(MouseEvent event) {
@@ -139,7 +162,7 @@ public class Gesture implements Playable {
     }
     
     /**
-     * While the user is dragging the mouse, move the Rectangle with it
+     * While the user is dragging the mouse, move the Gesture with it
      * @param event mouse drag
      */
     public void moveRect(MouseEvent event) {
@@ -149,7 +172,7 @@ public class Gesture implements Playable {
     
     /**
      * When the user stops dragging the mouse, set Note fields to the
-     * Rectangle's current location
+     * Gesture's current location
      * @param event mouse click
      */
     public void stopMoving(MouseEvent event) {
@@ -165,7 +188,12 @@ public class Gesture implements Playable {
     }
     
     public boolean isGesture(){return true; }
+    
     public boolean inLastFive(MouseEvent event) { return false; }
+    
+    /**
+     * we should delete these if we don't 
+     */
     public void setMovingDuration(MouseEvent event) {}
     public void moveDuration(MouseEvent event) {}
     public void stopDuration(MouseEvent event) {}

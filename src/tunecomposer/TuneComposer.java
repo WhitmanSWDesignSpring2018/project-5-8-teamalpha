@@ -1,5 +1,5 @@
 /*
- * CS 300-A, 2017S
+ * CS 370, 2019S
  */
 package tunecomposer;
 
@@ -177,7 +177,7 @@ public class TuneComposer extends Application {
     }
     
     /**
-     * 
+     * Makes a group from selected Playables
      */
     public void makeGroup() {
         Gesture group = new Gesture(selectedPlayables);
@@ -186,25 +186,37 @@ public class TuneComposer extends Application {
         notePane.getChildren().add(group.getRectangle());
         group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
             handleNoteClick(pressedEvent, group);
-            handleNotePress(pressedEvent, group);
+            handleNotePress(pressedEvent, group);   
         });
         
         group.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
             handleNoteDrag(dragEvent);
         });
-        
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
         });
-
+ 
     }
     
+    /**
+     * When the user selects the "Group" menu item, selected playables get grouped together. 
+     * @param event the menu selection event
+     */
     @FXML
     protected void handleGroup(ActionEvent event) {
         makeGroup();
     }
     
+    /**
+     * Ungroups the selected gesture. 
+     * Only removes the outermost gesture if gestures are nested. 
+     */
     public void unGroup(){
+        
+        //can we do this with recursion some how, go through each selected Playable and delete its outermost gesture 
+        //we might have to change our isSelected function 
+        //does not work when you have groups that are not overlapping and you trying to ungroup them all at once
+        
         ArrayList gestureList = new ArrayList();
         List<Playable> listone = new ArrayList<>(selectedPlayables); 
         int index = 0;
@@ -223,6 +235,10 @@ public class TuneComposer extends Application {
         }    
     }
     
+    /**
+     * When the user selects the "Ungroup" menu item, the outer most grouping on the selected Playables is removed.
+     * @param event the menu selection event
+     */
     @FXML
     protected void handleUnGroup(ActionEvent event){
         unGroup(); 
@@ -321,7 +337,6 @@ public class TuneComposer extends Application {
         clickInPane = false;
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
-        //System.out.println("selected" + selected);
         if (! control && ! selected) {
             selectAll(false);
             selectedPlayables.clear();
