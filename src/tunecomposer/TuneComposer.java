@@ -177,6 +177,13 @@ public class TuneComposer extends Application {
     }
     
     public void makeGroup() {
+    	selectedPlayables.clear();
+    	allPlayables.forEach((n) -> {
+            if (n.getSelected()) {
+                selectedPlayables.add(n);
+            }
+        });
+    	
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
         notePane.getChildren().add(group.getRectangle());
