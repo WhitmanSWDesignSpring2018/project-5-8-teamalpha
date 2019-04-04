@@ -24,6 +24,7 @@ public class Gesture implements Playable {
     private double y_coord;
     private double rectWidth;
     private double rectHeight;
+    private final int GRIDHEIGHT = 10;
     
     public static double lastNote = 0;
     
@@ -40,8 +41,7 @@ public class Gesture implements Playable {
     
     public Gesture(Set<Playable> newContents) {
         contents = new HashSet<Playable>(newContents); 
-        System.out.println("created: " + contents.size());
-        
+
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());
         ArrayList<Double> yList = new ArrayList<Double>(contents.size());
         ArrayList<Double> ends = new ArrayList<Double>(contents.size());
@@ -63,10 +63,6 @@ public class Gesture implements Playable {
         gestureRect.setMouseTransparent(false);
         
         isSelected = true;
-    }
-    
-    public Collection getContents() {
-    	return contents;
     }
     
     public double getWidth() {
@@ -96,35 +92,19 @@ public class Gesture implements Playable {
     }
     
     public void setSelected(boolean selected) {
-    	//System.out.println(gestureRect.getY());
         isSelected = selected;
-        
-//        contents.forEach((playable) -> {
-//        	playable.getRectangle().getStyleClass().addAll("selected");
-//            //playable.setSelected(isSelected);
-//            //System.out.println("leaves: " + selected);
-//        });
         
         if (isSelected) {
         	gestureRect.getStyleClass().clear();
         	gestureRect.getStyleClass().addAll("selected", "gesture");
-//        	contents.forEach((playable) -> {
-//        		playable.setSelected(true);
-//        	});
         } else {
         	gestureRect.getStyleClass().clear();
         	gestureRect.getStyleClass().addAll("unselected-grouped", "gesture");
         }
         
-        for (Playable playable: contents){
-            playable.setSelected(isSelected);
+        for (Playable playable : contents) {
+        	playable.setSelected(isSelected);
         }
-        
-//      System.out.println("contents " + contents.size());
-//      System.out.println("y " + y_coord);
-        
-        //System.out.println(gestureRect.getY());
-        
     }
     
     /**
@@ -157,11 +137,10 @@ public class Gesture implements Playable {
         double y = event.getY() - yOffset;
         
         x_coord = x;
-        y_coord = y - (y % 10);
+        y_coord = y - (y % GRIDHEIGHT);
         
         gestureRect.setX(x_coord);
-        gestureRect.setY(y_coord);
-        
+        gestureRect.setY(y_coord);   
     }
     
     public boolean isGesture(){return true; }
