@@ -24,6 +24,11 @@
     -fx-stroke: #000000;
 }
 
+.unselected-grouped {
+    -fx-stroke: #000000;
+    -fx-stroke-dash-array: 2; 
+    -fx-stroke-dash-offset: 5; 
+}
 .spacing {
     -fx-max-width: 161px;
 }
