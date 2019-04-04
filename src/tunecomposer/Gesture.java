@@ -113,7 +113,7 @@ public class Gesture implements Playable {
 //        	});
         } else {
         	gestureRect.getStyleClass().clear();
-        	gestureRect.getStyleClass().addAll("unselected", "gesture");
+        	gestureRect.getStyleClass().addAll("unselected-grouped", "gesture");
         }
         
         for (Playable playable: contents){

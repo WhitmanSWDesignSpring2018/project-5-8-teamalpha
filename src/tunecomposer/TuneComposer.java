@@ -176,6 +176,9 @@ public class TuneComposer extends Application {
         System.exit(0);
     }
     
+    /**
+     * 
+     */
     public void makeGroup() {
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
@@ -193,7 +196,7 @@ public class TuneComposer extends Application {
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
         });
-        //selectedPlayables.clear();
+
     }
     
     @FXML
@@ -203,18 +206,21 @@ public class TuneComposer extends Application {
     
     public void unGroup(){
         ArrayList gestureList = new ArrayList();
-        selectedPlayables.forEach((n) -> {
-            System.out.println(selectedPlayables.size());
-            if(n.isGesture()){
-                gestureList.add(n);
-                notePane.getChildren().remove(n.getRectangle()); 
-                //only want to do this once 
-                selectedPlayables.remove(n); 
-            }    
-        });
-        //problem because you have to click off the gesture in order to ungroup it
-        //you can't just press group and ungroup
-        selectedPlayables.removeAll(gestureList);
+        List<Playable> listone = new ArrayList<>(selectedPlayables); 
+        int index = 0;
+        for(int i = 0;i < selectedPlayables.size();i++){
+            if(listone.get(i).isGesture()){
+                gestureList.add(listone.get(i));
+                if(i > index){
+                    index = i;
+                }
+            }
+        }
+        if(listone.get(index).isGesture()){
+            notePane.getChildren().remove(listone.get(index).getRectangle()); 
+            allPlayables.remove(listone.get(index));
+            selectedPlayables.removeAll(gestureList);
+        }    
     }
     
     @FXML
