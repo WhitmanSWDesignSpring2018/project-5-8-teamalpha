@@ -222,11 +222,13 @@ public class TuneComposer extends Application {
                 }
             }
         }
-        if(listone.get(index).isGesture()){
-            notePane.getChildren().remove(listone.get(index).getRectangle()); 
-            allPlayables.remove(listone.get(index));
-            selectedPlayables.removeAll(gestureList);
-        }    
+        if(listone.size() > 0){
+             if(listone.get(index).isGesture()){
+                 notePane.getChildren().remove(listone.get(index).getRectangle()); 
+                 allPlayables.remove(listone.get(index));
+                 selectedPlayables.removeAll(gestureList);
+             }    
+        }
     }
     
     @FXML
