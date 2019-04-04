@@ -25,7 +25,7 @@ import javax.sound.midi.ShortMessage;
 
 /**
  * This JavaFX app lets the user play scales.
- * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl teamalpha
+ * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl + teamalpha
  */
 public class TuneComposer extends Application {
 
@@ -176,6 +176,9 @@ public class TuneComposer extends Application {
         System.exit(0);
     }
     
+    /**
+     * 
+     */
     public void makeGroup() {
     	selectedPlayables.clear();
     	allPlayables.forEach((n) -> {
@@ -186,8 +189,8 @@ public class TuneComposer extends Application {
     	
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
+        selectedPlayables.add(group); 
         notePane.getChildren().add(group.getRectangle());
-        
         group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
             handleNoteClick(pressedEvent, group);
             handleNotePress(pressedEvent, group);
@@ -205,6 +208,30 @@ public class TuneComposer extends Application {
     @FXML
     protected void handleGroup(ActionEvent event) {
         makeGroup();
+    }
+    
+    public void unGroup(){
+        ArrayList gestureList = new ArrayList();
+        List<Playable> listone = new ArrayList<>(selectedPlayables); 
+        int index = 0;
+        for(int i = 0;i < selectedPlayables.size();i++){
+            if(listone.get(i).isGesture()){
+                gestureList.add(listone.get(i));
+                if(i > index){
+                    index = i;
+                }
+            }
+        }
+        if(listone.get(index).isGesture()){
+            notePane.getChildren().remove(listone.get(index).getRectangle()); 
+            allPlayables.remove(listone.get(index));
+            selectedPlayables.removeAll(gestureList);
+        }    
+    }
+    
+    @FXML
+    protected void handleUnGroup(ActionEvent event){
+        unGroup(); 
     }
 
     /**

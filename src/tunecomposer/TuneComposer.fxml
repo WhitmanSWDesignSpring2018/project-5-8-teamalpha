@@ -78,6 +78,14 @@
                                               shortcut="UP" />
                       </accelerator>
                   </MenuItem>
+                  <MenuItem onAction="#handleUnGroup"
+                            text="Ungroup">
+                      <accelerator>
+                          <KeyCodeCombination alt="UP" code="U" control="DOWN"
+                                              meta="UP" shift="UP"
+                                              shortcut="UP"/>
+                      </accelerator>
+                  </MenuItem>
               </items>
             </Menu>
         </menus>

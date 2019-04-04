@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 
 /**
  *
- * @author taylorkm
+ * @author teamalpha
  */
 public class Gesture implements Playable {
     
@@ -40,8 +40,8 @@ public class Gesture implements Playable {
     private Set<Playable> contents;
     
     public Gesture(Set<Playable> newContents) {
-    	contents = new HashSet<Playable>(newContents);
-    	
+        contents = new HashSet<Playable>(newContents); 
+
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());
         ArrayList<Double> yList = new ArrayList<Double>(contents.size());
         ArrayList<Double> ends = new ArrayList<Double>(contents.size());
@@ -99,7 +99,7 @@ public class Gesture implements Playable {
         	gestureRect.getStyleClass().addAll("selected", "gesture");
         } else {
         	gestureRect.getStyleClass().clear();
-        	gestureRect.getStyleClass().addAll("unselected", "gesture");
+        	gestureRect.getStyleClass().addAll("unselected-grouped", "gesture");
         }
         
         for (Playable playable : contents) {
@@ -143,6 +143,7 @@ public class Gesture implements Playable {
         gestureRect.setY(y_coord);   
     }
     
+    public boolean isGesture(){return true; }
     public boolean inLastFive(MouseEvent event) { return false; }
     public void setMovingDuration(MouseEvent event) {}
     public void moveDuration(MouseEvent event) {}

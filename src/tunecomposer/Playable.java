@@ -39,4 +39,6 @@ public interface Playable {
     void moveDuration(MouseEvent event);
     
     void stopDuration(MouseEvent event);
+    
+    boolean isGesture(); 
 }
