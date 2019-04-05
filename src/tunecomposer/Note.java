@@ -14,6 +14,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * Note class creates a Rectangle representing the note to be played
  * @author Ian Hawkins, Madi Crowley, Ian Stewart, Melissa Kohl
+ * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
  */
 public class Note implements Playable {
     
@@ -39,7 +40,6 @@ public class Note implements Playable {
     /**
      * Note fields for creating rectangle and playing note
      */
-
     private final Rectangle noteRect;
     private double x_coord;
     private double y_coord;

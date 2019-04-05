@@ -14,11 +14,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 /**
- *
- * @author teamalpha
+ * Creates a gesture grouping playables together.
+ * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
  */
 public class Gesture implements Playable {
-    
+    /**
+     * Constants for the rectangle 
+     */
     private final Rectangle gestureRect;
     private double x_coord;
     private double y_coord;
@@ -36,10 +38,16 @@ public class Gesture implements Playable {
     private double widthOffset;
     
     private boolean isSelected;
-    private boolean nested;
     
+    /**
+     * a set of everything contained in the gesture
+     */
     private Set<Playable> contents;
     
+    /**
+     * Creates a new Gesture with the given contents. Calculates the height and width of the rectangle from the contents
+     * @param newContents
+     */
     public Gesture(Set<Playable> newContents) {
         contents = new HashSet<Playable>(newContents); 
 
@@ -64,24 +72,34 @@ public class Gesture implements Playable {
         gestureRect.setMouseTransparent(false);
         
         isSelected = true;
-        nested = false;
     }
     
+    /**
+     * Gets the width of the gesture's rectangle.
+     */
     public double getWidth() {
         return rectWidth;
     }
     
+    /**
+     * Updates the location of the last note so the animation knows when to stop.
+     */
     public void updateLastNote() {
         if (x_coord + rectWidth > lastNote) {
             lastNote = x_coord + rectWidth;
         }
     }
     
+    /**
+     * Gets the gesture's rectangle.
+     */
     public Rectangle getRectangle() {
         return gestureRect;
     }
     
-    
+    /**
+     * Schedules the gesture in the midiplayer, then updates the last note. Does this by calling schedule for every playable in contents
+     */
     public void schedule() {
         contents.forEach((playable) -> {
             playable.schedule();
@@ -89,10 +107,16 @@ public class Gesture implements Playable {
         });
     }
     
+    /**
+     * Gets the selected state of the gesture.
+     */
     public boolean getSelected() {
         return isSelected;
     }
     
+    /**
+     * Sets the selected state of the gesture, including setting every playable in contents to be selected
+     */
     public void setSelected(boolean selected) {
         isSelected = selected;
         
@@ -145,6 +169,9 @@ public class Gesture implements Playable {
         gestureRect.setY(y_coord);   
     }
     
+    /**
+     * Gets the collection of the contents
+     */
     public Collection getContents() {return contents;}
     
     public boolean isGesture(){return true; }
