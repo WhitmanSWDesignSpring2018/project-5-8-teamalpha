@@ -36,6 +36,7 @@ public class Gesture implements Playable {
     private double widthOffset;
     
     private boolean isSelected;
+    private boolean nested;
     
     private Set<Playable> contents;
     
@@ -63,6 +64,7 @@ public class Gesture implements Playable {
         gestureRect.setMouseTransparent(false);
         
         isSelected = true;
+        nested = false;
     }
     
     public double getWidth() {
@@ -142,6 +144,8 @@ public class Gesture implements Playable {
         gestureRect.setX(x_coord);
         gestureRect.setY(y_coord);   
     }
+    
+    public Collection getContents() {return contents;}
     
     public boolean isGesture(){return true; }
     public boolean inLastFive(MouseEvent event) { return false; }
