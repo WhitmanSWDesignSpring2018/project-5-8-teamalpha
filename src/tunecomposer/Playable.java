@@ -11,8 +11,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 /**
- *
- * @author taylorkm
+ * Provides a common interface for note and gesture.
+ * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
  */
 public interface Playable {
     double getWidth();

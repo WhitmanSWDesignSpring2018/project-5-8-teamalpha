@@ -177,7 +177,7 @@ public class TuneComposer extends Application {
     }
     
     /**
-     * 
+     * Makes a new gesture from the selected playables. Adds the rectangle to the NotePane and sets the event handlers.
      */
     public void makeGroup() {
     	selectedPlayables.clear();
@@ -205,11 +205,18 @@ public class TuneComposer extends Application {
         });
     }
     
+    /**
+     * Makes a group when the menu item is clicked.
+     * @param event the menu event
+     */
     @FXML
     protected void handleGroup(ActionEvent event) {
         makeGroup();
     }
     
+    /**
+     * Gets rid of all the top-level selected groups. Any nested or unselected gestures remain.
+     */
     public void unGroup() {
     	ArrayList<Playable> selectedGestures = new ArrayList<Playable>();
     	ArrayList<Playable> topLevelGestures = new ArrayList<Playable>();
@@ -237,6 +244,10 @@ public class TuneComposer extends Application {
     	}
     }
     
+    /**
+     * Ungroups the selected groups on menu item interaction.
+     * @param event the menu item selection event
+     */
     @FXML
     protected void handleUnGroup(ActionEvent event){
         unGroup(); 
