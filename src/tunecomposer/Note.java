@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package tunecomposer;
+import java.util.Collection;
+import java.util.HashSet;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -221,6 +224,8 @@ public class Note implements Playable {
     }
     
     public boolean isGesture() {return false;}
+    
+    public Collection getContents() {return new HashSet();}
     
     
 }

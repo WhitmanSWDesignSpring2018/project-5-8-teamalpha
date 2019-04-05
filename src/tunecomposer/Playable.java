@@ -5,6 +5,8 @@
  */
 package tunecomposer;
 
+import java.util.Collection;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -13,7 +15,6 @@ import javafx.scene.shape.Rectangle;
  * @author taylorkm
  */
 public interface Playable {
-    
     double getWidth();
     
     void updateLastNote();
@@ -41,4 +42,6 @@ public interface Playable {
     void stopDuration(MouseEvent event);
     
     boolean isGesture(); 
+    
+    Collection getContents();
 }

@@ -210,25 +210,31 @@ public class TuneComposer extends Application {
         makeGroup();
     }
     
-    public void unGroup(){
-        ArrayList gestureList = new ArrayList();
-        List<Playable> listone = new ArrayList<>(selectedPlayables); 
-        int index = 0;
-        for(int i = 0;i < selectedPlayables.size();i++){
-            if(listone.get(i).isGesture()){
-                gestureList.add(listone.get(i));
-                if(i > index){
-                    index = i;
-                }
-            }
-        }
-        if(listone.size() > 0){
-             if(listone.get(index).isGesture()){
-                 notePane.getChildren().remove(listone.get(index).getRectangle()); 
-                 allPlayables.remove(listone.get(index));
-                 selectedPlayables.removeAll(gestureList);
-             }    
-        }
+    public void unGroup() {
+    	ArrayList<Playable> selectedGestures = new ArrayList<Playable>();
+    	ArrayList<Playable> topLevelGestures = new ArrayList<Playable>();
+    	for (Playable p : allPlayables) {
+    		if (p.isGesture() && p.getSelected()) {
+    			selectedGestures.add(p);
+    		}
+    	}
+    	boolean isIn;
+    	for (Playable g : selectedGestures) {
+    		isIn = false;
+    		for (Playable h : selectedGestures) {
+    			if (h.getContents().contains(g)) {
+    				isIn = true;
+    			}
+    		}
+    		if (!isIn) {
+    			topLevelGestures.add(g);
+    		}
+    	}
+    	for (Playable g : topLevelGestures) {
+    		notePane.getChildren().remove(g.getRectangle());
+    		allPlayables.remove(g);
+    		selectedPlayables.remove(g);
+    	}
     }
     
     @FXML
