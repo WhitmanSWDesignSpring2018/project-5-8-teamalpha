@@ -6,7 +6,7 @@ public class CommandManager {
 	private static Deque<Undoable> undoStack;
 	private static Deque<Undoable> redoStack;
 	
-	private CommandManager() {
+	public CommandManager() {
 		super();
 		undoStack = new ArrayDeque<>();
 		redoStack = new ArrayDeque<>();
