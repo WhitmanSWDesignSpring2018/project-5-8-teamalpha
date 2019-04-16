@@ -34,6 +34,8 @@ public class TuneComposer extends Application {
      * A MidiPlayer for all notes to use.
      */
     public static final MidiPlayer PLAYER = new MidiPlayer(100,60);
+    
+    public static CommandManager commandManager = new CommandManager();
 
     /**
      * A list of instrument values to associate with MidiPlayer channels
@@ -43,7 +45,7 @@ public class TuneComposer extends Application {
     /**
      * The set of all notes, to be played later.
      */    
-    private static Set<Playable> allPlayables;
+    public static Set<Playable> allPlayables;
 
     /**
      * A line moves from left to right across the main pane. It crosses each
@@ -316,6 +318,9 @@ public class TuneComposer extends Application {
             
             Instrument instrument = getInstrument();
             Note note = new Note(event.getX(), event.getY(), instrument);
+            AddNoteCommand noteCommand = new AddNoteCommand(note);
+            
+            commandManager.add(noteCommand);
             
             allPlayables.add(note);
             notePane.getChildren().add(note.getRectangle());
@@ -342,7 +347,7 @@ public class TuneComposer extends Application {
      * @param event mouse click
      * @param playable note Rectangle that was clicked
      */
-    private void handleNoteClick(MouseEvent event, Playable playable) {
+    public void handleNoteClick(MouseEvent event, Playable playable) {
         clickInPane = false;
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
@@ -365,7 +370,7 @@ public class TuneComposer extends Application {
      * @param event mouse click
      * @param note note Rectangle that was clicked
      */
-    private void handleNotePress(MouseEvent event, Playable playable) {
+    public void handleNotePress(MouseEvent event, Playable playable) {
         changeDuration = playable.inLastFive(event);
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
@@ -383,7 +388,7 @@ public class TuneComposer extends Application {
      * playables
      * @param event mouse drag
      */
-    private void handleNoteDrag(MouseEvent event) {
+    public void handleNoteDrag(MouseEvent event) {
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
                 if (changeDuration) {
@@ -399,7 +404,7 @@ public class TuneComposer extends Application {
      * When the user stops dragging the mouse, stop moving the selected notes
      * @param event mouse click
      */
-    private void handleNoteStopDragging(MouseEvent event) {
+    public void handleNoteStopDragging(MouseEvent event) {
         clickInPane = false;
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
