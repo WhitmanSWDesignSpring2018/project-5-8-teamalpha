@@ -110,8 +110,9 @@ public class Note implements Playable {
      * Adds this Note to the MidiPlayer
      */
     public void schedule() {
-        TuneComposer.PLAYER.addNote(pitch, VOLUME, startTime, (int)rectWidth, 
+        ButtonController.PLAYER.addNote(pitch, VOLUME, startTime, (int)rectWidth, 
                                     instrument.ordinal(), TRACK);
+        noteRect.setVisible(true);
     }
     
     /**
@@ -223,9 +224,23 @@ public class Note implements Playable {
         noteRect.setWidth(rectWidth);
     }
     
+    public void hide(){
+        noteRect.setVisible(false);
+    }
+    
     public boolean isGesture() {return false;}
     
     public Collection getContents() {return new HashSet();}
     
+    public void undo(){
     
+    }
+    
+    public void redo(){
+    
+    }
+    
+    public String getUndoRedoName(){
+        return null;
+    }
 }
