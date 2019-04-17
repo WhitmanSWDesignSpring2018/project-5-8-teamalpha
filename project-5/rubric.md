@@ -1,4 +1,4 @@
-# GRADE: 64/64 
+# GRADE: 59.5/64 
 
 ## Functional and implementation requirements: 34/36 points total
 
@@ -29,33 +29,33 @@ Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
 3.5|4| All prior requirements are met, unless they have been superseded by new requirements. _Please fix the issue about platform-independent keyboard shortcuts. It should not be difficult._
 
-### Release tag - 1.5/2 points
+### Release tag - 1/2 points
 
 Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
-1.5|2| The release is tagged as project-5-release. _It was tagged as ```project-5```, which is not exactly what I asked for_
+1|2| The release is tagged as project-5-release. _It was tagged as ```project-5``` and ```project_5_, neither of which is exactly what I asked for. I had a hard time finding your UML._
 
-## Reflection - 12/12 points
+## Reflection - 11/12 points
 
 For project 5 and beyond, I will expect your discussion of design and elegance to refer explicitly to design principles we have discussed in class.
 
 Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
-3|3| UML 
+3|3| UML | _Classname should be Note?|
 2|2| Design overview
 2|2| What is elegant?
-2|2| What is not elegant?
+1|2| What is not elegant? | _I'd like to see more application of design principles here._
 1|1| Velocity
-1|1| Collaboration statement
+1|1| Collaboration statement | _I like that you referred to some of the roles we read about._
 1|1| Team retrospective
 
-## Elegance - 16/16 points
+## Elegance - 14/16 points
 
 I looked at your UML diagram to assess the elegance of your class design.  You will get a grade for class design starting with Project 6.
-I spot-checked a new class () and a modified class () to assess method-level design and self-explanatory code.
+I spot-checked a new class (Gesture) and a modified class (TuneComposer) to assess method-level design and self-explanatory code.
 
 Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
 0|0| Class design 
 8|8| Method design
-8|8| Self-explanatory code
+6|8| Self-explanatory code | _See my issues on GitHub._
