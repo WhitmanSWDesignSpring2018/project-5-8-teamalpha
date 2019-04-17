@@ -37,7 +37,8 @@ public class TuneComposer extends Application {
     
     public static ButtonController buttoncontroller = new ButtonController();
     
-    ClickController clickcontroller;
+    @FXML
+    public static ClickController clickcontroller;
 
     /**
      * The set of all notes, to be played later.
