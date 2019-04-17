@@ -1,71 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 
-<MenuBar>
-  <menus>
-    <Menu text="File">
-      <items>
-        <MenuItem onAction="#handleExitMenuItemAction" text="Exit">
-               <accelerator>
-                  <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-               </accelerator>
-        </MenuItem>
-      </items>
-    </Menu>
-    <Menu text="Action">
-      <items>
-        <MenuItem onAction="#handleStartPlaying" text="Play">
-               <accelerator>
-                  <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-               </accelerator>
-        </MenuItem>
-        <MenuItem onAction="#handleStopPlaying" text="Stop">
-                <accelerator>
-                   <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                </accelerator>
-        </MenuItem>
-      </items>
-    </Menu>
-    <Menu text="Edit">
-      <items>
-         <MenuItem onAction="#handleSelectAll" text="Select All">
-                <accelerator>
-                   <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                </accelerator>
-         </MenuItem>
-         <MenuItem onAction="#handleDelete" text="Delete">
-                <accelerator>
-                   <KeyCodeCombination alt="UP" code="BACK_SPACE" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                </accelerator>
-         </MenuItem>
-         <SeparatorMenuItem />
-         <MenuItem onAction="#handleGroup" text="Group">
-                <accelerator>
-                   <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                </accelerator>
-          </MenuItem>
-          <MenuItem onAction="#handleUnGroup" text="Ungroup">
-                 <accelerator>
-                     <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                 </accelerator>
-          </MenuItem>
-          <SeparatorMenuItem mnemonicParsing="false" />
-          <MenuItem text="Undo">
-                 <accelerator>
-                     <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                 </accelerator>
-          </MenuItem>
-          <MenuItem text="Redo">
-                 <accelerator>
-                  	  <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                 </accelerator>
-          </MenuItem>
-        </items>
-      </Menu>
-   </menus>
-</MenuBar>
+<Group fx:id="background" />
+<Pane fx:id="notePane" minHeight="1280.0" minWidth="2000.0" onDragDetected="#startDrag" onMouseClicked="#handleClick" onMouseDragged="#continueDrag" />
+<AnchorPane fx:id="playLinePane" prefHeight="200.0" prefWidth="200.0">
+  <children>
+    <Line fx:id="movingLine" endY="1280.0" styleClass="play-line" visible="false" />
+    <Rectangle fx:id="selectRect" arcHeight="5.0" arcWidth="5.0" layoutX="0.0" layoutY="0.0" strokeType="INSIDE" styleClass="selection-rect" visible="false" />
+  </children>
+</AnchorPane>
