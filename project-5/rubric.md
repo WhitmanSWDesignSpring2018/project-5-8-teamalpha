@@ -23,11 +23,11 @@ Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
 0|0| When the right edge of a gesture is grabbed and stretched left or right, the duration and offset of everything in the gesture should stretch proportionally.
 
-### No regressions - 3.5/4 points
+### No regressions - 1.5/2 points
 
 Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
-3.5|4| All prior requirements are met, unless they have been superseded by new requirements. _Please fix the issue about platform-independent keyboard shortcuts. It should not be difficult._
+1.5|2| All prior requirements are met, unless they have been superseded by new requirements. _Please fix the issue about platform-independent keyboard shortcuts. It should not be difficult._
 
 ### Release tag - 1/2 points
 
@@ -49,7 +49,7 @@ Earned|Possible|Requirement | Comments
 1|1| Collaboration statement | _I like that you referred to some of the roles we read about._
 1|1| Team retrospective
 
-## Elegance - 14/16 points
+## Elegance - 10/12 points
 
 I looked at your UML diagram to assess the elegance of your class design.  You will get a grade for class design starting with Project 6.
 I spot-checked a new class (Gesture) and a modified class (TuneComposer) to assess method-level design and self-explanatory code.
@@ -58,4 +58,4 @@ Earned|Possible|Requirement | Comments
 ------|--------|------------|----------
 0|0| Class design 
 8|8| Method design
-6|8| Self-explanatory code | _See my issues on GitHub._
+2|4| Self-explanatory code | _See my issues on GitHub._
