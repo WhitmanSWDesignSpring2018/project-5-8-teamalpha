@@ -33,38 +33,17 @@ public class TuneComposer extends Application {
      /**
      * A MidiPlayer for all notes to use.
      */
-    public static final MidiPlayer PLAYER = new MidiPlayer(100,60);
-    
     public static CommandManager commandManager = new CommandManager();
-
-    /**
-     * A list of instrument values to associate with MidiPlayer channels
-     */
-    private final int[] timbreList = new int[] {0, 6, 12, 19, 21, 24, 40, 60};
+    
+    public static ButtonController buttoncontroller = new ButtonController();
+    
+    ClickController clickcontroller;
 
     /**
      * The set of all notes, to be played later.
      */    
     public static Set<Playable> allPlayables;
-
-    /**
-     * A line moves from left to right across the main pane. It crosses each
-     * note as that note is played.
-     */
-    private static PlayLine playLine;
     
-    /**
-     * Boolean flags to control flow when user clicks in composition panel
-     */
-    private boolean clickInPane = true;
-    private boolean changeDuration = false;
-    private boolean isDragSelecting = false;
-    
-    /**
-     * List of notes being selected by the selection area
-     */
-    private static Set<Playable> selectedPlayables;
-
     /**
      * The background of the application.
      */
@@ -75,19 +54,7 @@ public class TuneComposer extends Application {
      * The pane in which notes are constructed.
      */
     @FXML
-    private Pane notePane;
-
-    /**
-     * The pane in which the play line is constructed and plays.
-     */
-    @FXML
-    private AnchorPane playLinePane;
-
-    /**
-     * The line wrapped by PlayLine.
-     */
-    @FXML
-    private Line movingLine;
+    public Pane notePane;
 
     /**
      * An area for click-and-drag note selection.
@@ -101,17 +68,11 @@ public class TuneComposer extends Application {
     private Rectangle selectRect;
 
     /**
-     * A group of sidebar radio buttons for selecting an instrument.
-     */
-    @FXML
-    private ToggleGroup instrumentToggle;
-
-    /**
      * Constructor initializes Note sets
      */
     public TuneComposer() {
         allPlayables = new HashSet();
-        selectedPlayables = new HashSet();
+        clickcontroller = new ClickController(buttoncontroller);
     }
 
     /**
@@ -121,141 +82,6 @@ public class TuneComposer extends Application {
     public static void addNote(Note note) {
         allPlayables.add(note);
     }
-
-    /**
-     * Plays notes that have been added.
-     * Called when the Play button is clicked.
-     */
-    public void startPlaying() {
-        PLAYER.stop();
-        PLAYER.clear();
-        for(int i=0; i<8; i++){
-            PLAYER.addMidiEvent(ShortMessage.PROGRAM_CHANGE + i, timbreList[i], 0, 0, 0);
-        }
-        allPlayables.forEach((playable) -> {
-            playable.schedule();
-            playable.updateLastNote();
-        });
-
-        PLAYER.play();
-        playLine.play(Note.lastNote);
-    }
-
-    /**
-     * When user selects "Start" menu item, start playing composition
-     * @param ignored not used
-     */
-    @FXML
-    public void handleStartPlaying(ActionEvent ignored) {
-        startPlaying();
-    }
-
-    /**
-     * Stops playing composition.
-     * Called when the Stop button is clicked. Does not remove notes from the
-     * screen or from allPlayables.
-     */
-    public void stopPlaying() {
-        PLAYER.stop();
-        playLine.stop();
-
-    }
-
-    /**
-     * When the user selects "Stop" menu item, stop playing composition
-     * @param ignored not used
-     */
-    @FXML
-    protected void handleStopPlaying(ActionEvent ignored) {
-        stopPlaying();
-    }
-
-    /**
-     * When the user selects the "Exit" menu item, exit the program.
-     * @param event the menu selection event
-     */
-    @FXML
-    protected void handleExitMenuItemAction(ActionEvent event) {
-        System.exit(0);
-    }
-    
-    /**
-     * Makes a new gesture from the selected playables. Adds the rectangle to the NotePane and sets the event handlers.
-     */
-    public void makeGroup() {
-    	selectedPlayables.clear();
-    	allPlayables.forEach((n) -> {
-            if (n.getSelected()) {
-                selectedPlayables.add(n);
-            }
-        });
-    	
-        Gesture group = new Gesture(selectedPlayables);
-        allPlayables.add(group);
-        selectedPlayables.add(group); 
-        notePane.getChildren().add(group.getRectangle());
-        group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
-            handleNoteClick(pressedEvent, group);
-            handleNotePress(pressedEvent, group);
-        });
-        
-        group.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
-            handleNoteDrag(dragEvent);
-        });
-        
-        group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
-            handleNoteStopDragging(releaseEvent);
-        });
-    }
-    
-    /**
-     * Makes a group when the menu item is clicked.
-     * @param event the menu event
-     */
-    @FXML
-    protected void handleGroup(ActionEvent event) {
-        makeGroup();
-    }
-    
-    /**
-     * Gets rid of all the top-level selected groups. Any nested or unselected gestures remain.
-     */
-    public void unGroup() {
-    	ArrayList<Playable> selectedGestures = new ArrayList<Playable>();
-    	ArrayList<Playable> topLevelGestures = new ArrayList<Playable>();
-    	for (Playable p : allPlayables) {
-    		if (p.isGesture() && p.getSelected()) {
-    			selectedGestures.add(p);
-    		}
-    	}
-    	boolean isIn;
-    	for (Playable g : selectedGestures) {
-    		isIn = false;
-    		for (Playable h : selectedGestures) {
-    			if (h.getContents().contains(g)) {
-    				isIn = true;
-    			}
-    		}
-    		if (!isIn) {
-    			topLevelGestures.add(g);
-    		}
-    	}
-    	for (Playable g : topLevelGestures) {
-    		notePane.getChildren().remove(g.getRectangle());
-    		allPlayables.remove(g);
-    		selectedPlayables.remove(g);
-    	}
-    }
-    
-    /**
-     * Ungroups the selected groups on menu item interaction.
-     * @param event the menu item selection event
-     */
-    @FXML
-    protected void handleUnGroup(ActionEvent event){
-        unGroup(); 
-    }
-
     /**
      * Initializes FXML. Called automatically.
      * (1) adds 127 gray lines to background
@@ -269,259 +95,8 @@ public class TuneComposer extends Application {
             background.getChildren().add(row);
         }
 
-        playLine = new PlayLine(movingLine);
-
-        // Let mouse events go through to notePane
-        playLinePane.setMouseTransparent(true);
-
         selection = new SelectionArea(selectRect);
     }
-
-    /**
-     * Get the instrument currently selected in the sidebar.
-     * @return the selected instrument
-     */
-    private Instrument getInstrument() {
-        RadioButton selectedButton = (RadioButton)instrumentToggle.getSelectedToggle();
-        String instrument = selectedButton.getText();
-        switch(instrument) {
-            case "Piano":           return Instrument.PIANO;
-            case "Harpsichord":     return Instrument.HARPSICHORD;
-            case "Marimba":         return Instrument.MARIMBA;
-            case "Church Organ":    return Instrument.CHURCH_ORGAN;
-            case "Accordion":       return Instrument.ACCORDION;
-            case "Guitar":          return Instrument.GUITAR;
-            case "Violin":          return Instrument.VIOLIN;
-            case "French Horn":     return Instrument.FRENCH_HORN;
-            default:
-                throw new IllegalArgumentException("Unrecognized Instrument");
-        }
-    }
-
-    /**
-     * Construct a note from a click. Called via FXML.
-     * @param event a mouse click
-     */
-    public void handleClick(MouseEvent event) {
-        if (playLine.isPlaying()) {
-            stopPlaying();
-        }
-        else if (isDragSelecting){
-            isDragSelecting = false;
-            selection.endRectangle();
-        }
-        else if (clickInPane) {
-            if (!event.isControlDown()) {
-                selectAll(false);
-                selectedPlayables.clear();
-            }
-            
-            Instrument instrument = getInstrument();
-            Note note = new Note(event.getX(), event.getY(), instrument);
-            AddNoteCommand noteCommand = new AddNoteCommand(note);
-            
-            commandManager.add(noteCommand);
-            
-            allPlayables.add(note);
-            notePane.getChildren().add(note.getRectangle());
-            
-            note.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
-                handleNoteClick(pressedEvent, note);
-                handleNotePress(pressedEvent, note);
-            });
-            
-            note.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
-                handleNoteDrag(dragEvent);
-            });
-            
-            note.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
-                handleNoteStopDragging(releaseEvent);
-            });
-        }
-        clickInPane = true;
-    }
-    
-    /**
-     * When user presses on a note, set the notes to be selected or 
-     * unselected accordingly.
-     * @param event mouse click
-     * @param playable note Rectangle that was clicked
-     */
-    public void handleNoteClick(MouseEvent event, Playable playable) {
-        clickInPane = false;
-        boolean control = event.isControlDown();
-        boolean selected = playable.getSelected();
-        if (! control && ! selected) {
-            selectAll(false);
-            selectedPlayables.clear();
-            playable.setSelected(true);
-            selectedPlayables.add(playable);
-        } else if (control && ! selected) {
-            playable.setSelected(true);
-            selectedPlayables.add(playable);
-        } else if (control && selected) {
-            playable.setSelected(false);
-        }
-    }
-    
-    /**
-     * When user presses on a note, set offsets in each Note in case the user
-     * drags the mouse.
-     * @param event mouse click
-     * @param note note Rectangle that was clicked
-     */
-    public void handleNotePress(MouseEvent event, Playable playable) {
-        changeDuration = playable.inLastFive(event);
-        allPlayables.forEach((n) -> {
-            if (n.getSelected()) {
-                if (changeDuration) {
-                    n.setMovingDuration(event);
-                } else {
-                    n.setMovingCoords(event);
-                }
-            }
-        });
-    }
-    
-    /**
-     * When the user drags the mouse on a playable Rectangle, move all selected
-     * playables
-     * @param event mouse drag
-     */
-    public void handleNoteDrag(MouseEvent event) {
-        allPlayables.forEach((n) -> {
-            if (n.getSelected()) {
-                if (changeDuration) {
-                    n.moveDuration(event);
-                } else {
-                    n.moveRect(event);
-                }
-            }
-        });
-    }
-    
-    /**
-     * When the user stops dragging the mouse, stop moving the selected notes
-     * @param event mouse click
-     */
-    public void handleNoteStopDragging(MouseEvent event) {
-        clickInPane = false;
-        allPlayables.forEach((n) -> {
-            if (n.getSelected()) {
-                if (changeDuration) {
-                    n.stopDuration(event);
-                } else {
-                    n.stopMoving(event);
-                }
-            }
-        });
-        changeDuration = false;
-    }
-
-    /**
-     * Automatically-called when user drags mouse. Stops playing if composition
-     * is playing, and starts dragging selection rectangle if mouse click is
-     * not on a note Rectangle.
-     * @param event mouse click
-     */
-    public void startDrag(MouseEvent event) {
-        if (playLine.isPlaying()) {
-            stopPlaying();
-        } else if (clickInPane) {
-            handleSelectionStartDrag(event);
-        }
-    }
-
-    /**
-     * Automatically-called when user drags mouse. Stops playing if composition
-     * is playing, and continues to drag selection rectangle if initial mouse 
-     * click was not on a note Rectangle.
-     * @param event mouse click
-     */
-    public void continueDrag(MouseEvent event) {
-        if (playLine.isPlaying()) {
-            stopPlaying();
-        } else if (clickInPane) {
-            handleSelectionContinueDrag(event);
-        }
-    }
-    
-    /**
-     * Move lower-right corner of selection rectangle with the dragging mouse
-     * @param event mouse drag
-     */
-    private void handleSelectionStartDrag(MouseEvent event) {
-        isDragSelecting = true;
-        
-        selection.startRectangle(event.getX(), event.getY());
-
-        if(!event.isControlDown()){
-            selectAll(false);
-        }
-    }
-    
-    /**
-     * Continue to update notes throughout drag.
-     * @param event Current value of MouseEvent
-     */
-    private void handleSelectionContinueDrag(MouseEvent event) {
-        selection.update(event.getX(), event.getY());
-
-        allPlayables.forEach((note) -> {
-            Rectangle rect = note.getRectangle();
-            double horizontal = selectRect.getX() + selectRect.getWidth();
-            double vertical = selectRect.getY() + selectRect.getHeight();
-
-            // Thanks to Paul for suggesting the `intersects` method.
-            if(selection.getRectangle().intersects(note.getRectangle().getLayoutBounds())) {
-                selectedPlayables.add(note);
-                note.setSelected(true);
-            } else {
-                if(selectedPlayables.contains(note)) {
-                    note.setSelected(false);
-                    selectedPlayables.remove(note); 
-                }
-            }
-        });
-    }
-
-    /**
-     * Delete all selected notes. Called from FXML
-     * @param event unused
-     */
-    @FXML
-    void handleDelete(ActionEvent event) {
-        Collection toDelete = new ArrayList();
-        allPlayables.forEach((playable) -> {
-            if (playable.getSelected()) {
-                toDelete.add(playable);
-                notePane.getChildren().remove(playable.getRectangle());
-            }
-        });
-        allPlayables.removeAll(toDelete);
-        selectedPlayables.clear();
-    }
-    
-    /**
-     * Select all notes. Called from FXML
-     * @param event unused
-     */
-    @FXML
-    void handleSelectAll(ActionEvent event) {
-        selectAll(true);
-    }
-    
-    /**
-     * Sets selection values for all of the notes
-     * @param selected true to select all
-     */
-    private void selectAll(boolean selected) {
-        allPlayables.forEach((playable) -> {
-            playable.setSelected(selected);
-            selectedPlayables.add(playable);
-        });
-    }
-
     /**
      * Construct the scene and start the application.
      * @param primaryStage the stage for the main window
