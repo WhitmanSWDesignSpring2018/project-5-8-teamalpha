@@ -35,7 +35,8 @@ public class TuneComposer extends Application {
      */
     public static CommandManager commandManager = new CommandManager();
     
-    public static ButtonController buttoncontroller = new ButtonController();
+    @FXML
+    public static ButtonController buttoncontroller;
     
     @FXML
     public static ClickController clickcontroller;
@@ -73,6 +74,7 @@ public class TuneComposer extends Application {
      */
     public TuneComposer() {
         allPlayables = new HashSet();
+        buttoncontroller =  new ButtonController();
         clickcontroller = new ClickController(buttoncontroller);
     }
 
