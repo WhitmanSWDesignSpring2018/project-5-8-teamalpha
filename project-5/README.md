@@ -8,11 +8,13 @@ Having an interface is elegant because it deals with the similarities between no
   
 **Explain what, if anything, in your solution is inelegant and why you didn't make it elegant (for example, maybe you didn't have time or the knowledge to fix it). For full credit, apply concepts, guidelines, and/or principles you learned in class.**
 
-The Ungroup method seems inelegant because it contains three for loops, one of which is nested inside another. It also requires the creation of two new arraylists. It's less elegant because we wrote it last so we couldn't think of another way to get it to work at all within the infrastructure we had made for the gestures and also we were running out of time at that point. Also, the way makeGroup ended up being implemented is inelegant and is the result of a patch to a documented issue. Writing a more elegant version would have required rewriting and redesigning a lot of code and there wasn't time by the time the issue was discovered.
+The Ungroup method seems inelegant because it contains three for loops, one of which is nested inside another. _So are you concerned about the cyclomatic complexity?_ It also requires the creation of two new arraylists. It's less elegant because we wrote it last so we couldn't think of another way to get it to work at all within the infrastructure we had made for the gestures and also we were running out of time at that point. Also, the way makeGroup ended up being implemented is inelegant and is the result of a patch to a documented issue. Writing a more elegant version would have required rewriting and redesigning a lot of code and there wasn't time by the time the issue was discovered.
 
 **Include an estimate of your velocity. How many story points did you estimate you would complete during this assignment? How many did you actually complete, how many person-hours did the team spend, and what is the ratio of points/person-hour? I want you to monitor your velocity to help you plan better over the final iterations. There are no "good" or "bad" numbers for velocity.**
     
-We worked about 23 person hours on this project. We thought there would be about 5 story points and that seems fairly accurate having completed it. The ratio of points/person hour is 1/4 to 1/5.
+We worked about 23 person hours on this project. We thought there would be about 5 story points and that seems fairly accurate having completed it. The ratio of points/person hour is 1/4 to 1/5. 
+
+_This is really helpful! I'll be very curious to see if that estimate changes for Project 6._
 
 **How did you colloborate? What role[s] did each team member play? What went well that your team will keep doing during the next project assignment? What will you improve? How?**
 
