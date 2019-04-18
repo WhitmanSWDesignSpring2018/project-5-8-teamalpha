@@ -29,6 +29,8 @@ public class ButtonController {
     
     private NoteGroup notegroup;
     
+    private TuneComposer parentController;
+    
     /**
      * The line wrapped by PlayLine.
      */
@@ -46,6 +48,10 @@ public class ButtonController {
     public ButtonController(){
         ClickController.playLinePane.setMouseTransparent(true);
         playLine = new PlayLine(movingLine);
+    }
+    
+    public void setParentController(TuneComposer parentController){
+        this.parentController = parentController;
     }
     public void startPlaying() {
         PLAYER.stop();
