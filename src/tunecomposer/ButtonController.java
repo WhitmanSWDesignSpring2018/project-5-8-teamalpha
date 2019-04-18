@@ -27,6 +27,8 @@ public class ButtonController {
     
     private final int[] timbreList = new int[] {0, 6, 12, 19, 21, 24, 40, 60};
     
+    private NoteGroup notegroup;
+    
     /**
      * The line wrapped by PlayLine.
      */
@@ -35,8 +37,6 @@ public class ButtonController {
     /**
      * The pane in which the play line is constructed and plays.
      */
-    @FXML
-    private AnchorPane playLinePane;
     // Let mouse events go through to notePane
      /**
      * Plays notes that have been added.
@@ -44,7 +44,7 @@ public class ButtonController {
      */
     public PlayLine playLine;
     public ButtonController(){
-        playLinePane.setMouseTransparent(true);
+        ClickController.playLinePane.setMouseTransparent(true);
         playLine = new PlayLine(movingLine);
     }
     public void startPlaying() {
