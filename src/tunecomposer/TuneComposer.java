@@ -37,7 +37,9 @@ public class TuneComposer extends Application {
     
     public static ButtonController buttoncontroller = new ButtonController();
     
-    ClickController clickcontroller;
+    public static ClickController clickcontroller;
+    
+    public static NoteGroup notegroup;
 
     /**
      * The set of all notes, to be played later.
@@ -54,7 +56,7 @@ public class TuneComposer extends Application {
      * The pane in which notes are constructed.
      */
     @FXML
-    public Pane notePane;
+    public static Pane notePane;
 
     /**
      * An area for click-and-drag note selection.
@@ -66,6 +68,12 @@ public class TuneComposer extends Application {
      */
     @FXML
     private Rectangle selectRect;
+            
+    /**
+        * A group of sidebar radio buttons for selecting an instrument.
+        */
+    @FXML
+    private static ToggleGroup instrumentToggle;
 
     /**
      * Constructor initializes Note sets
@@ -73,6 +81,7 @@ public class TuneComposer extends Application {
     public TuneComposer() {
         allPlayables = new HashSet();
         clickcontroller = new ClickController(buttoncontroller);
+        notegroup = new NoteGroup(clickcontroller);
     }
 
     /**
@@ -81,6 +90,26 @@ public class TuneComposer extends Application {
      */
     public static void addNote(Note note) {
         allPlayables.add(note);
+    }
+    /**
+     * Get the instrument currently selected in the sidebar.
+     * @return the selected instrument
+     */
+    public static Instrument getInstrument() {
+        RadioButton selectedButton = (RadioButton)instrumentToggle.getSelectedToggle();
+        String instrument = selectedButton.getText();
+        switch(instrument) {
+            case "Piano":           return Instrument.PIANO;
+            case "Harpsichord":     return Instrument.HARPSICHORD;
+            case "Marimba":         return Instrument.MARIMBA;
+            case "Church Organ":    return Instrument.CHURCH_ORGAN;
+            case "Accordion":       return Instrument.ACCORDION;
+            case "Guitar":          return Instrument.GUITAR;
+            case "Violin":          return Instrument.VIOLIN;
+            case "French Horn":     return Instrument.FRENCH_HORN;
+            default:
+                throw new IllegalArgumentException("Unrecognized Instrument");
+        }
     }
     /**
      * Initializes FXML. Called automatically.
@@ -124,5 +153,4 @@ public class TuneComposer extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }
