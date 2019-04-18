@@ -7,6 +7,7 @@ package tunecomposer;
 
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import static tunecomposer.TuneComposer.allPlayables;
 import static tunecomposer.TuneComposer.commandManager;
@@ -27,6 +28,9 @@ public class ClickController {
     private Rectangle selectRect;
     
     ButtonController buttonController;
+    
+    @FXML
+    public static AnchorPane playLinePane;
     
     public ClickController(ButtonController buttoncontroller){
         buttonController = buttoncontroller;
@@ -50,6 +54,46 @@ public class ClickController {
             playable.setSelected(false);
         }
     }
+    /**
+     * Construct a note from a click. Called via FXML.
+     * @param event a mouse click
+     */
+    public void handleClick(MouseEvent event) {
+        if (buttonController.playLine.isPlaying()) {
+            buttonController.stopPlaying();
+        }
+        else if (isDragSelecting){
+            isDragSelecting = false;
+            selection.endRectangle();
+        }
+        else if (clickInPane) {
+        	//System.out.println("else 2");
+            if (!event.isControlDown()) {
+                buttonController.selectAll(false);
+            }
+            
+            Instrument instrument = TuneComposer.getInstrument();
+            Note note = new Note(event.getX(), event.getY(), instrument);
+            
+            allPlayables.add(note);
+            TuneComposer.notePane.getChildren().add(note.getRectangle());
+            
+            note.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
+                handleNoteClick(pressedEvent, note);
+                handleNotePress(pressedEvent, note);
+            });
+            
+            note.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
+                handleNoteDrag(dragEvent);
+            });
+            
+            note.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
+                handleNoteStopDragging(releaseEvent);
+            });
+        }
+        clickInPane = true;
+    }
+
     
     /**
      * When user presses on a note, set offsets in each Note in case the user
