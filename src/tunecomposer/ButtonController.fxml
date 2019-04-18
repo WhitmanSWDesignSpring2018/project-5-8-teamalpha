@@ -6,7 +6,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.input.KeyCodeCombination?>
 
-<MenuBar>
+<MenuBar xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="tunecomposer.ButtonController">
   <menus>
     <Menu text="File">
       <items>
@@ -44,16 +44,7 @@
                 </accelerator>
          </MenuItem>
          <SeparatorMenuItem />
-         <MenuItem onAction="#handleGroup" text="Group">
-                <accelerator>
-                   <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                </accelerator>
-          </MenuItem>
-          <MenuItem onAction="#handleUnGroup" text="Ungroup">
-                 <accelerator>
-                     <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                 </accelerator>
-          </MenuItem>
+         <fx:include fx:id="notegroup" source="NoteGroup.fxml" />
           <SeparatorMenuItem mnemonicParsing="false" />
           <MenuItem text="Undo">
                  <accelerator>
