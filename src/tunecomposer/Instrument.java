@@ -24,11 +24,6 @@ public enum Instrument {
         FRENCH_HORN;
         
         /**
-        * A group of sidebar radio buttons for selecting an instrument.
-        */
-        @FXML
-        private ToggleGroup instrumentToggle;
-        /**
          * Override the built-in method from the Enum class
          * @return Lower case string of instrument name with dashes as spaces
          */
@@ -46,24 +41,4 @@ public enum Instrument {
                 default: throw new IllegalArgumentException();
             }
         }
-            /**
-     * Get the instrument currently selected in the sidebar.
-     * @return the selected instrument
-     */
-    private Instrument getInstrument() {
-        RadioButton selectedButton = (RadioButton)instrumentToggle.getSelectedToggle();
-        String instrument = selectedButton.getText();
-        switch(instrument) {
-            case "Piano":           return Instrument.PIANO;
-            case "Harpsichord":     return Instrument.HARPSICHORD;
-            case "Marimba":         return Instrument.MARIMBA;
-            case "Church Organ":    return Instrument.CHURCH_ORGAN;
-            case "Accordion":       return Instrument.ACCORDION;
-            case "Guitar":          return Instrument.GUITAR;
-            case "Violin":          return Instrument.VIOLIN;
-            case "French Horn":     return Instrument.FRENCH_HORN;
-            default:
-                throw new IllegalArgumentException("Unrecognized Instrument");
-        }
-    }
 }
