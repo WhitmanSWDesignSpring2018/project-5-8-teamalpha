@@ -35,11 +35,15 @@ public class TuneComposer extends Application {
      */
     public static CommandManager commandManager = new CommandManager();
     
+    @FXML
     public static ButtonController buttoncontroller = new ButtonController();
     
-    public static ClickController clickcontroller;
+    @FXML
+    private ClickController clickcontroller;
     
     public static NoteGroup notegroup;
+    
+    
 
     /**
      * The set of all notes, to be played later.
@@ -82,6 +86,8 @@ public class TuneComposer extends Application {
         allPlayables = new HashSet();
         clickcontroller = new ClickController(buttoncontroller);
         notegroup = new NoteGroup(clickcontroller);
+        buttoncontroller.setParentController(this);
+        clickcontroller.setParentController(this);
     }
 
     /**
@@ -95,7 +101,7 @@ public class TuneComposer extends Application {
      * Get the instrument currently selected in the sidebar.
      * @return the selected instrument
      */
-    public static Instrument getInstrument() {
+    public Instrument getInstrument() {
         RadioButton selectedButton = (RadioButton)instrumentToggle.getSelectedToggle();
         String instrument = selectedButton.getText();
         switch(instrument) {
