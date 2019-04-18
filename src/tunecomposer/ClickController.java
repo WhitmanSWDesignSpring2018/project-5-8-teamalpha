@@ -32,9 +32,17 @@ public class ClickController {
     @FXML
     public static AnchorPane playLinePane;
     
+    private TuneComposer parentController;
+    
+    
     public ClickController(ButtonController buttoncontroller){
         buttonController = buttoncontroller;
     }
+    
+    public void setParentController(TuneComposer parentController){
+        this.parentController = parentController;
+    }
+    
     /**
      * When user presses on a note, set the notes to be selected or 
      * unselected accordingly.
@@ -58,6 +66,7 @@ public class ClickController {
      * Construct a note from a click. Called via FXML.
      * @param event a mouse click
      */
+    @FXML
     public void handleClick(MouseEvent event) {
         if (buttonController.playLine.isPlaying()) {
             buttonController.stopPlaying();
@@ -72,7 +81,7 @@ public class ClickController {
                 buttonController.selectAll(false);
             }
             
-            Instrument instrument = TuneComposer.getInstrument();
+            Instrument instrument = this.parentController.getInstrument();
             Note note = new Note(event.getX(), event.getY(), instrument);
             
             allPlayables.add(note);
@@ -155,6 +164,7 @@ public class ClickController {
      * not on a note Rectangle.
      * @param event mouse click
      */
+    @FXML
     public void startDrag(MouseEvent event) {
         if (buttonController.playLine.isPlaying()) {
             buttonController.stopPlaying();
@@ -169,6 +179,7 @@ public class ClickController {
      * click was not on a note Rectangle.
      * @param event mouse click
      */
+    @FXML
     public void continueDrag(MouseEvent event) {
         if (buttonController.playLine.isPlaying()) {
             buttonController.stopPlaying();
