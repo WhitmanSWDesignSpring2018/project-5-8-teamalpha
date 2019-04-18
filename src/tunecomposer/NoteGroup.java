@@ -6,7 +6,9 @@
 package tunecomposer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import static tunecomposer.TuneComposer.allPlayables;
 
@@ -16,17 +18,16 @@ import static tunecomposer.TuneComposer.allPlayables;
  */
 public class NoteGroup {
     
-    private static Set<Playable> selectedPlayables;
-    
-    public NoteGroup(Set<Playable> playableSet){
-        selectedPlayables = playableSet;
+    ClickController clickController;
+    public NoteGroup(ClickController clickcontroller){
+        clickController = clickcontroller;
     }
     
      /**
      * Makes a new gesture from the selected playables. Adds the rectangle to the NotePane and sets the event handlers.
      */
     public void makeGroup() {
-    	selectedPlayables.clear();
+        HashSet<Playable> selectedPlayables = new HashSet<Playable>();
     	allPlayables.forEach((n) -> {
             if (n.getSelected()) {
                 selectedPlayables.add(n);
@@ -36,18 +37,18 @@ public class NoteGroup {
         Gesture group = new Gesture(selectedPlayables);
         allPlayables.add(group);
         selectedPlayables.add(group); 
-        notePane.getChildren().add(group.getRectangle());
+        TuneComposer.notePane.getChildren().add(group.getRectangle());
         group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
-            handleNoteClick(pressedEvent, group);
-            handleNotePress(pressedEvent, group);
+            clickController.handleNoteClick(pressedEvent, group);
+            clickController.handleNotePress(pressedEvent, group);
         });
         
         group.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
-            handleNoteDrag(dragEvent);
+            clickController.handleNoteDrag(dragEvent);
         });
         
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
-            handleNoteStopDragging(releaseEvent);
+            clickController.handleNoteStopDragging(releaseEvent);
         });
     }
     
@@ -75,9 +76,18 @@ public class NoteGroup {
     		}
     	}
     	for (Playable g : topLevelGestures) {
-    		notePane.getChildren().remove(g.getRectangle());
+    		TuneComposer.notePane.getChildren().remove(g.getRectangle());
     		allPlayables.remove(g);
-    		selectedPlayables.remove(g);
     	}
+    }
+    
+    @FXML
+    private void handleGroup() {
+        makeGroup();
+    }
+    
+    @FXML
+    private void handleUnGroup() {
+        unGroup();
     }
 }
