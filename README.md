@@ -1,7 +1,7 @@
 # project-5-8-teamalpha
 project-5-8-teamalpha created by GitHub Classroom
 
-**Project 6**
+## **Project 6**
 
 ## **Design Overview:**
 We used a command pattern and undoable interface to implement Undo and Redo. It consisted of two deques, because they are faster than stacks according to the internet. The Command Manager has three children commands: DeleteCommand, AddNoteCommand, and EditCommand. We wanted to have a buttonController and ClickController with their owm FXML files to refactor TuneComposer but ran into techincal debt and reverted back to having everything in TuneComposer. We fixed several small issues related to the code reviews, but could not accomplish the refactoring issues due to technical debt.
