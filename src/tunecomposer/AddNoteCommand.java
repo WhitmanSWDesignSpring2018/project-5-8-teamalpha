@@ -5,7 +5,7 @@ package tunecomposer;
  * @author Colin Aslett Abbey Felley Kimberly Taylor Angie Mead
  */
 public class AddNoteCommand implements Undoable {
-    private static Note note;
+    private Note note;
 
     /**
      * Creates the command based on the given note.
