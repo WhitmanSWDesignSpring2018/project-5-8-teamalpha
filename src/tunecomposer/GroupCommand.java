@@ -6,25 +6,35 @@
 package tunecomposer;
 
 /**
- *
- * @author taylorkm
+ * Represents the action of creating a gesture.
+ * @author Abbey Felley Colin Aslett Kimberly Taylor Angie Mead
  */
 public class GroupCommand implements Undoable{
     private static Gesture gesture;
-	
-	public GroupCommand(Gesture newGesture) {
-		gesture = newGesture;
-	}
-        
-	public void undo() {
-		TuneComposer.allPlayables.remove(gesture);
-		gesture.getRectangle().setVisible(false);
-	}
-	
-	public void redo() {
-		TuneComposer.allPlayables.add(gesture);
-		gesture.getRectangle().setVisible(true);
-	}
-    
-    
+
+    /**
+     * Initializes the Gesture owned by the GroupCommand.
+     * @param newGesture 
+     */
+    public GroupCommand(Gesture newGesture) {
+            gesture = newGesture;
+    }
+
+    /**
+     * Removes the Gesture from the composition. Removes it from allPlayables 
+     * and hides the rectangle from view.
+     */
+    public void undo() {
+            TuneComposer.allPlayables.remove(gesture);
+            gesture.getRectangle().setVisible(false);
+    }
+
+    /**
+     * Adds the Gesture to the composition. Adds it to allPlayables and sets the
+     * rectangle to invisible.
+     */
+    public void redo() {
+            TuneComposer.allPlayables.add(gesture);
+            gesture.getRectangle().setVisible(true);
+    }
 }
