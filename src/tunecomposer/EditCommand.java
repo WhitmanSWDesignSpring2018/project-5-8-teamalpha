@@ -12,7 +12,7 @@ import java.util.Collection;
  * @author Abbey Felley Colin Aslett Kimberly Taylor Angie Mead
  */
 public class EditCommand {
-    private static Collection<Playable> editedPlayables;
+    private Collection<Playable> editedPlayables;
 
     /**
      * Constructs the command from the given set of Playables. Probably what
