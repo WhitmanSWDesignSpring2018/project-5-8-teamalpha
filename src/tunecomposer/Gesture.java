@@ -45,8 +45,9 @@ public class Gesture implements Playable {
     private Set<Playable> contents;
     
     /**
-     * Creates a new Gesture with the given contents. Calculates the height and width of the rectangle from the contents
-     * @param newContents
+     * Creates a new Gesture with the given contents. Calculates the height and
+     * width of the rectangle from the contents
+     * @param newContents, set of Playables to be included in the new gesture
      */
     public Gesture(Set<Playable> newContents) {
         contents = new HashSet<Playable>(newContents); 
@@ -98,7 +99,8 @@ public class Gesture implements Playable {
     }
     
     /**
-     * Schedules the gesture in the midiplayer, then updates the last note. Does this by calling schedule for every playable in contents
+     * Schedules the gesture in the midiplayer, then updates the last note. 
+     * Does this by calling schedule for every playable in contents
      */
     public void schedule() {
         contents.forEach((playable) -> {
@@ -115,7 +117,8 @@ public class Gesture implements Playable {
     }
     
     /**
-     * Sets the selected state of the gesture, including setting every playable in contents to be selected
+     * Sets the selected state of the gesture, including setting every playable 
+     * in contents to be selected.
      */
     public void setSelected(boolean selected) {
         isSelected = selected;
@@ -170,13 +173,44 @@ public class Gesture implements Playable {
     }
     
     /**
-     * Gets the collection of the contents
+     * Gets the collection of the contents.
      */
     public Collection getContents() {return contents;}
     
+    /**
+     * Returns true. This allows us to call isGesture() on any Playable to 
+     * determine its identity.
+     * @return true
+     */
     public boolean isGesture(){return true; }
+    
+    /**
+     * Returns false. Eventually may be implemented to allow for editing the 
+     * lengths of gestures.
+     * @param event, the mouseClickEvent
+     * @return false because it isn't implemented yet
+     */
     public boolean inLastFive(MouseEvent event) { return false; }
+    
+    /**
+     * Does nothing. Eventually may be implemented to allow for editin the 
+     * lengths of gestures.
+     * @param event, the mouseClickEvent
+     */
     public void setMovingDuration(MouseEvent event) {}
+    
+    /**
+     * Does nothing. Eventually may be implemented to allow for editin the 
+     * lengths of gestures.
+     * @param event, the mouseClickEvent
+     */
     public void moveDuration(MouseEvent event) {}
+    
+    /**
+     * Does nothing. Eventually may be implemented to allow for editin the 
+     * lengths of gestures.
+     * @param event, the mouseClickEvent
+     */
     public void stopDuration(MouseEvent event) {}
+
 }
