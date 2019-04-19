@@ -10,7 +10,7 @@ package tunecomposer;
  * @author Abbey Felley Colin Aslett Kimberly Taylor Angie Mead
  */
 public class GroupCommand implements Undoable{
-    private static Gesture gesture;
+    private Gesture gesture;
 
     /**
      * Initializes the Gesture owned by the GroupCommand.
