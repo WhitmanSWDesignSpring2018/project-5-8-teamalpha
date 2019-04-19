@@ -7,7 +7,7 @@ import java.util.Collection;
  * @author Abbey Felley Colin Aslett Kimberly Taylor Angie Mead
  */
 public class DeleteCommand implements Undoable {
-    private static Collection<Playable> removedPlayables;
+    private Collection<Playable> removedPlayables;
 
     /**
      * Initializes the DeleteCommand.
