@@ -15,6 +15,7 @@ import javafx.scene.shape.Rectangle;
  * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
  */
 public interface Playable {
+    
     double getWidth();
     
     void updateLastNote();
@@ -44,4 +45,5 @@ public interface Playable {
     boolean isGesture(); 
     
     Collection getContents();
+
 }
