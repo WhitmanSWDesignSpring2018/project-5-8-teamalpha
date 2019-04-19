@@ -17,7 +17,6 @@ import javafx.scene.shape.Rectangle;
  * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
  */
 public class Note implements Playable {
-    
     /**
      * Constants for playing note in MidiPlayer
      */
@@ -85,6 +84,10 @@ public class Note implements Playable {
         isSelected = true;
     }
     
+    /**
+     * Gets the width of the note rectangle.
+     * @return rectWidth, the width of the note rectangle.
+     */
     public double getWidth() {
         return rectWidth;
     }
@@ -110,7 +113,7 @@ public class Note implements Playable {
      * Adds this Note to the MidiPlayer
      */
     public void schedule() {
-        ButtonController.PLAYER.addNote(pitch, VOLUME, startTime, (int)rectWidth, 
+        TuneComposer.PLAYER.addNote(pitch, VOLUME, startTime, (int)rectWidth, 
                                     instrument.ordinal(), TRACK);
         noteRect.setVisible(true);
     }
@@ -224,23 +227,18 @@ public class Note implements Playable {
         noteRect.setWidth(rectWidth);
     }
     
-    public void hide(){
-        noteRect.setVisible(false);
-    }
-    
+    /**
+     * Returns false. This allows us to call isGesture() on any Playable to 
+     * determine its identity.
+     * @return false
+     */
     public boolean isGesture() {return false;}
     
+    /**
+     * Returns an empty HashSet. This method is mostly written so that we can 
+     * retrieve the contents of a Gesture but call it on any Playable.
+     * @return an empty HashSet
+     */
     public Collection getContents() {return new HashSet();}
     
-    public void undo(){
-    
-    }
-    
-    public void redo(){
-    
-    }
-    
-    public String getUndoRedoName(){
-        return null;
-    }
 }
