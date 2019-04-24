@@ -55,14 +55,14 @@
            </Menu>
            <Menu text="Edit">
               <items>
-                  <MenuItem onAction="#handleSelectAll" text="Select All">
+                  <MenuItem fx:id = "selectAllAction" onAction="#handleSelectAll" text="Select All">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="A" control="DOWN" 
                                             meta="UP" shift="UP" 
                                             shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem onAction="#handleDelete" 
+                  <MenuItem fx:id = "deleteAction" onAction="#handleDelete" 
                           text="Delete">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="BACK_SPACE" 
@@ -70,7 +70,7 @@
                                             shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem onAction="#handleGroup" 
+                  <MenuItem fx:id = "groupAction" onAction="#handleGroup" 
                             text="Group">
                       <accelerator>
                           <KeyCodeCombination alt="UP" code="G" control="DOWN"
@@ -78,7 +78,7 @@
                                               shortcut="UP" />
                       </accelerator>
                   </MenuItem>
-                  <MenuItem onAction="#handleUnGroup"
+                  <MenuItem fx:id = "ungroupAction" onAction="#handleUnGroup"
                             text="Ungroup">
                       <accelerator>
                           <KeyCodeCombination alt="UP" code="U" control="DOWN"
