@@ -24,7 +24,6 @@ import javafx.stage.WindowEvent;
 import javax.sound.midi.ShortMessage;
 
 /**
- * new version
  * This JavaFX app lets the user play scales.
  * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl + teamalpha
  * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
@@ -152,6 +151,7 @@ public class TuneComposer extends Application {
         clickInPane = false;
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
+        
         if (! control && ! selected) {
             selectAll(false);
             playable.setSelected(true);
@@ -182,6 +182,7 @@ public class TuneComposer extends Application {
             }
             
             Instrument instrument = getInstrument();
+            
             Note note = new Note(event.getX(), event.getY(), instrument);
             AddNoteCommand noteaction = new AddNoteCommand(note);
             
@@ -314,6 +315,7 @@ public class TuneComposer extends Application {
     private void handleSelectionContinueDrag(MouseEvent event) {
         selection.update(event.getX(), event.getY());
 
+        //Collection toSelect = new ArrayList();
         allPlayables.forEach((note) -> {
             Rectangle rect = note.getRectangle();
             double horizontal = selectRect.getX() + selectRect.getWidth();
@@ -322,12 +324,16 @@ public class TuneComposer extends Application {
             // Thanks to Paul for suggesting the `intersects` method.
             if(selection.getRectangle().intersects(note.getRectangle().getLayoutBounds())) {
                 note.setSelected(true);
+                //toSelect.add(note);
             } else {
                 if(note.getSelected()) {
                     note.setSelected(false);
                 }
             }
         });
+        //SelectCommand select = new SelectCommand(toSelect,true);
+        //commandManager.add(select);
+        //select.redo();
     }
     
     /**
@@ -411,6 +417,14 @@ public class TuneComposer extends Application {
     @FXML
     void handleSelectAll(ActionEvent event) {
         selectAll(true);
+        Collection toSelect = new ArrayList();
+        allPlayables.forEach((playable)-> {
+           toSelect.add(playable); 
+        });
+        SelectCommand select = new SelectCommand(toSelect,true);
+        commandManager.add(select);
+        select.redo();
+        System.out.println("Huh?");
     }
     
     /**
