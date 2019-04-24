@@ -24,6 +24,7 @@ import javafx.stage.WindowEvent;
 import javax.sound.midi.ShortMessage;
 
 /**
+ * new version
  * This JavaFX app lets the user play scales.
  * @author Ian Stewart, Ian Hawkins, Angie Mead, Melissa Kohl + teamalpha
  * @author Abbey Felley, Colin Aslett, Angie Mead, Kimberly Taylor
