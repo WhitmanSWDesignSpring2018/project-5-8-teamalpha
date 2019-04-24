@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.shape.Line;
@@ -97,7 +98,15 @@ public class TuneComposer extends Application {
      * Plays notes that have been added.
      * Called when the Play button is clicked.
      */
-    
+    //buttons
+    @FXML
+    private MenuItem deleteAction;
+    @FXML
+    private MenuItem selectAllAction;
+    @FXML
+    private MenuItem groupAction;
+    @FXML
+    private MenuItem ungroupAction;
     /**
      * Boolean flags to control flow when user clicks in composition panel.
      */
@@ -157,6 +166,7 @@ public class TuneComposer extends Application {
             playable.setSelected(true);
         } else if (control && ! selected) {
             playable.setSelected(true);
+            
         } else if (control && selected) {
             playable.setSelected(false);
         }
@@ -206,6 +216,18 @@ public class TuneComposer extends Application {
             });
         }
         clickInPane = true;
+        deleteAction.setDisable(false);
+        selectAllAction.setDisable(false);
+        HashSet<Playable> selectedPlayables = new HashSet<Playable>();
+    	allPlayables.forEach((n) -> {
+            if (n.getSelected()) {
+                selectedPlayables.add(n);
+            }
+        });
+        if(selectedPlayables.size() > 1){
+            groupAction.setDisable(false);
+        }
+        //ungroupAction.setDisable(true);
     }
 
     
@@ -408,6 +430,10 @@ public class TuneComposer extends Application {
         DeleteCommand deletecommand = new DeleteCommand(toDelete);
         deletecommand.redo();
         TuneComposer.commandManager.add(deletecommand);
+        if(allPlayables.isEmpty()){
+            deleteAction.setDisable(true);
+            selectAllAction.setDisable(true);
+        }
     }
     
     /**
@@ -467,6 +493,8 @@ public class TuneComposer extends Application {
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
         });
+        groupAction.setDisable(true);
+        //ungroupAction.setDisable(false);
     }
     
     /**
@@ -497,6 +525,10 @@ public class TuneComposer extends Application {
     		notePane.getChildren().remove(g.getRectangle());
     		allPlayables.remove(g);
     	}
+        if(selectedGestures.size() == 1){
+            //ungroupAction.setDisable(true);
+        }
+        groupAction.setDisable(false);
     }
     
     /**
@@ -551,6 +583,10 @@ public class TuneComposer extends Application {
         }
 
         selection = new SelectionArea(selectRect);
+        deleteAction.setDisable(true);
+        selectAllAction.setDisable(true);
+        groupAction.setDisable(true);
+        //ungroupAction.setDisable(true);
     }
     
     /**
