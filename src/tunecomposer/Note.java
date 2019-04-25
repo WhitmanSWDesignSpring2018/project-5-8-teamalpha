@@ -91,6 +91,7 @@ public class Note implements Playable {
     public double getWidth() {
         return rectWidth;
     }
+    
 
     /**
      * Update the last note so we know when to stop the player and red line
@@ -174,16 +175,49 @@ public class Note implements Playable {
         double x = event.getX() - xOffset;
         double y = event.getY() - yOffset;
         
+//        startTime = (int) x;
+//        pitch = MAX_PITCH - (int) y / RECTHEIGHT;
+//        
+//        x_coord = x;
+//        y_coord = y - (y % RECTHEIGHT);
+//        //maybe cafix the snapping up problem with integer division/rounding
+//        
+//        noteRect.setX(x_coord);
+//        noteRect.setY(y_coord);
+    }
+    
+    public void move(double XDistance, double YDistance){
+        double x = x_coord + XDistance; 
+        double y = y_coord +YDistance; 
         startTime = (int) x;
         pitch = MAX_PITCH - (int) y / RECTHEIGHT;
         
         x_coord = x;
         y_coord = y - (y % RECTHEIGHT);
-        //maybe can fix the snapping up problem with integer division/rounding
+        //y_coord = (long) ((y+5)/10)*10; 
         
-        noteRect.setX(x_coord);
-        noteRect.setY(y_coord);
+        noteRect.setX(x_coord); 
+        noteRect.setY(y_coord); 
+        
+        System.out.println(y_coord); 
     }
+    
+    public void unmove(double XDistance, double YDistance){
+        double x = x_coord + XDistance; 
+        double y = y_coord +YDistance; 
+        startTime = (int) x;
+        pitch = MAX_PITCH - (int) y / RECTHEIGHT;
+        
+        x_coord = x;
+        y_coord = y + (y % RECTHEIGHT);
+        //y_coord = (long) ((y+5)/10)*10; 
+        
+        noteRect.setX(x_coord); 
+        noteRect.setY(y_coord); 
+        
+        System.out.println(y_coord); 
+    }
+
     
     /**
      * Check whether the user has clicked within the last 5 pixels
@@ -240,5 +274,6 @@ public class Note implements Playable {
      * @return an empty HashSet
      */
     public Collection getContents() {return new HashSet();}
+    
     
 }

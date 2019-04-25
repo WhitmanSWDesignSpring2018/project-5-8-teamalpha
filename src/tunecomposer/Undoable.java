@@ -11,6 +11,7 @@ package tunecomposer;
  */
 
 public interface Undoable {
-	void undo();
-	void redo();
+    void execute(); 
+    void undo();
+    void redo();
 }

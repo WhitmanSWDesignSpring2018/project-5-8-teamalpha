@@ -26,6 +26,9 @@ public class SelectCommand implements Undoable {
         selected = sel;
     }
     
+    public void execute(){
+        redo(); 
+    }
     /**
      * Unselectes the Playables.
      */
