@@ -14,6 +14,10 @@ public class AddNoteCommand implements Undoable {
     public AddNoteCommand(Note newNote) {
             note = newNote;
     }
+    
+    public void execute(){
+        redo();
+    }
 
     /**
      * Undoes the addition of the note. Removes the note from allPlayables

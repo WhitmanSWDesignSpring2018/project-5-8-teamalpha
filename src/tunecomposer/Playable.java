@@ -45,5 +45,9 @@ public interface Playable {
     boolean isGesture(); 
     
     Collection getContents();
+    
+    void move(double xDistance, double yDistance); 
+    
+    void unmove(double xDistance, double yDistance); 
 
 }

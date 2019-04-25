@@ -82,6 +82,8 @@ public class Gesture implements Playable {
         return rectWidth;
     }
     
+    
+    
     /**
      * Updates the location of the last note so the animation knows when to stop.
      */
@@ -170,6 +172,15 @@ public class Gesture implements Playable {
         
         gestureRect.setX(x_coord);
         gestureRect.setY(y_coord);   
+    }
+    
+    public void move(double finalXLocation, double finalYLocation){
+        gestureRect.setX(finalXLocation); 
+        gestureRect.setY(finalYLocation); 
+    }
+    
+    public void unmove(double finalXLocation, double finalYLocation){
+        
     }
     
     /**

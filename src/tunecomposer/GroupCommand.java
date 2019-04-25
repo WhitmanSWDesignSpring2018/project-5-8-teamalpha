@@ -19,6 +19,10 @@ public class GroupCommand implements Undoable{
     public GroupCommand(Gesture newGesture) {
             gesture = newGesture;
     }
+    
+    public void execute(){
+        redo();
+    }
 
     /**
      * Removes the Gesture from the composition. Removes it from allPlayables 

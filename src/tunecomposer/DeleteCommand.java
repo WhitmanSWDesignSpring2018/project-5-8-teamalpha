@@ -16,6 +16,10 @@ public class DeleteCommand implements Undoable {
     public DeleteCommand(Collection<Playable> toRemove) {
         removedPlayables = toRemove;
     }
+    
+    public void execute(){
+        redo(); 
+    }
 
     /**
      * Puts back the deleted playables by adding them back to allPlayables.

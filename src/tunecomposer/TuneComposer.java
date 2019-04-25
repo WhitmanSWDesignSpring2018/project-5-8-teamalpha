@@ -94,6 +94,10 @@ public class TuneComposer extends Application {
     @FXML
      AnchorPane playLinePane;
     
+    
+    public MouseEvent dragStart; 
+    
+    
     /**
      * Plays notes that have been added.
      * Called when the Play button is clicked.
@@ -199,7 +203,7 @@ public class TuneComposer extends Application {
             commandManager.add(noteaction);
             //System.out.println(commandManager.undoSize());
             
-            noteaction.redo();
+            noteaction.execute();
             notePane.getChildren().add(note.getRectangle());
             
             note.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
@@ -229,8 +233,7 @@ public class TuneComposer extends Application {
         }
         //ungroupAction.setDisable(true);
     }
-
-    
+  
     /**
      * When user presses on a note, set offsets in each Note in case the user
      * drags the mouse.
@@ -238,6 +241,7 @@ public class TuneComposer extends Application {
      * @param note note Rectangle that was clicked
      */
     private void handleNotePress(MouseEvent event, Playable playable) {
+        dragStart = event; 
         changeDuration = playable.inLastFive(event);
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
@@ -268,21 +272,23 @@ public class TuneComposer extends Application {
     }
     
     /**
-     * When the user stops dragging the mouse, stop moving the selected notes
+     * When the user stops dragging the mouse, stops moving the selected notes
      * @param event mouse click
      */
     private void handleNoteStopDragging(MouseEvent event) {
         clickInPane = false;
+        Collection<Playable> movedPlayables = new ArrayList(); 
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
+                movedPlayables.add(n); 
                 if (changeDuration) {
                     n.stopDuration(event);
-                } else {
-                    n.stopMoving(event);
                 }
-                
             }
         });
+        MoveCommand newcommand = new MoveCommand(movedPlayables, dragStart, event); 
+        commandManager.add(newcommand); 
+        newcommand.execute(); 
         changeDuration = false;
     }
 
@@ -294,6 +300,7 @@ public class TuneComposer extends Application {
      */
     @FXML
     private void startDrag(MouseEvent event) {
+        dragStart = event; 
         if (playLine.isPlaying()) {
             stopPlaying();
         } else if (clickInPane) {
@@ -336,8 +343,6 @@ public class TuneComposer extends Application {
      */
     private void handleSelectionContinueDrag(MouseEvent event) {
         selection.update(event.getX(), event.getY());
-
-        //Collection toSelect = new ArrayList();
         allPlayables.forEach((note) -> {
             Rectangle rect = note.getRectangle();
             double horizontal = selectRect.getX() + selectRect.getWidth();
@@ -428,7 +433,7 @@ public class TuneComposer extends Application {
             }
         });
         DeleteCommand deletecommand = new DeleteCommand(toDelete);
-        deletecommand.redo();
+        deletecommand.execute();
         TuneComposer.commandManager.add(deletecommand);
         if(allPlayables.isEmpty()){
             deleteAction.setDisable(true);
@@ -449,7 +454,7 @@ public class TuneComposer extends Application {
         });
         SelectCommand select = new SelectCommand(toSelect,true);
         commandManager.add(select);
-        select.redo();
+        select.execute();
         System.out.println("Huh?");
     }
     
@@ -480,7 +485,7 @@ public class TuneComposer extends Application {
         notePane.getChildren().add(group.getRectangle());
         GroupCommand groupcommand = new GroupCommand(group);
         commandManager.add(groupcommand);
-        groupcommand.redo();
+        groupcommand.execute();
         group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
             handleNoteClick(pressedEvent, group);
             handleNotePress(pressedEvent, group);

@@ -47,7 +47,6 @@ public class CommandManager {
                 undoable.undo();
                 redoStack.push(undoable);
         }
-        //System.out.println(undoStack.size());
     }
 
     /**
@@ -61,10 +60,5 @@ public class CommandManager {
                 undoStack.push(undoable);
         }
     }
-
-// I wrote this to help debug
-//    public int undoSize() {
-//        return undoStack.size();
-//    }
     
 }
