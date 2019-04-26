@@ -7,7 +7,6 @@ package tunecomposer;
 
 import java.util.Collection;
 import javafx.scene.input.MouseEvent;
-import static tunecomposer.TuneComposer.allPlayables;
 
 /**
  *

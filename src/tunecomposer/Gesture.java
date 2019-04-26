@@ -174,12 +174,25 @@ public class Gesture implements Playable {
         gestureRect.setY(y_coord);   
     }
     
-    public void move(double finalXLocation, double finalYLocation){
-        gestureRect.setX(finalXLocation); 
-        gestureRect.setY(finalYLocation); 
+    public void move(double XDistance, double YDistance){
+        double x = x_coord + XDistance; 
+        double y = y_coord +YDistance; 
+      
+        
+        x_coord = x;
+        y_coord = y - (y % GRIDHEIGHT);
+        //y_coord = (long) ((y+5)/10)*10; 
+        
+        gestureRect.setX(x_coord); 
+        gestureRect.setY(y_coord); 
+        
     }
     
     public void unmove(double finalXLocation, double finalYLocation){
+        
+    }
+    
+    public void stretch(double xDistance){
         
     }
     

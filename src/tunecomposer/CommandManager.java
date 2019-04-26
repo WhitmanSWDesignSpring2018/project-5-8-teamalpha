@@ -61,4 +61,12 @@ public class CommandManager {
         }
     }
     
+    public int getUndoStackSize(){
+        return undoStack.size(); 
+    }
+    
+    public int getRedoStackSize(){
+        return redoStack.size(); 
+    }
+    
 }
