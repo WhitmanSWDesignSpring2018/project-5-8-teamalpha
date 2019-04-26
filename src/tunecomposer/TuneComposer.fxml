@@ -37,14 +37,14 @@
           </Menu>
             <Menu text="Action">
               <items>
-                <MenuItem onAction="#handleStartPlaying" text="Play" >
+                <MenuItem fx:id = "playAction" onAction="#handleStartPlaying" text="Play" >
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="P" control="DOWN" 
                                             meta="UP" shift="UP" 
                                             shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem onAction="#handleStopPlaying" text="Stop" >
+                  <MenuItem fx:id = "stopAction" onAction="#handleStopPlaying" text="Stop" >
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" 
                                             meta="UP" shift="UP" 
@@ -86,7 +86,7 @@
                                               shortcut="UP"/>
                       </accelerator>
                   </MenuItem>
-                  <MenuItem onAction="#handleUndo"  
+                  <MenuItem fx:id = "undoAction" onAction="#handleUndo"  
                             text="Undo">
                   	  <accelerator>
                   	      <KeyCodeCombination alt="UP" code="Z" control="DOWN"
@@ -94,7 +94,7 @@
                   	      					  shortcut="UP"/>
                   	  </accelerator>
                   </MenuItem>
-                  <MenuItem onAction="#handleRedo"
+                  <MenuItem fx:id = "redoAction" onAction="#handleRedo"
                             text="Redo">
                   	  <accelerator>
                   	      <KeyCodeCombination alt="UP" code="Z" control="DOWN"

@@ -49,5 +49,7 @@ public interface Playable {
     void move(double xDistance, double yDistance); 
     
     void unmove(double xDistance, double yDistance); 
+    
+    void stretch(double xDistance); 
 
 }

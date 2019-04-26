@@ -217,6 +217,14 @@ public class Note implements Playable {
         
         System.out.println(y_coord); 
     }
+    
+    public void stretch(double xDistance){
+        rectWidth = rectWidth + xDistance + widthOffset;
+        if (rectWidth < MARGIN) rectWidth = MARGIN;
+        
+        noteRect.setWidth(rectWidth);
+    }
+    
 
     
     /**

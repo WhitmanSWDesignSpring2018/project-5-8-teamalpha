@@ -111,6 +111,15 @@ public class TuneComposer extends Application {
     private MenuItem groupAction;
     @FXML
     private MenuItem ungroupAction;
+    @FXML
+    private MenuItem redoAction; 
+    @FXML
+    private MenuItem undoAction;
+    @FXML 
+    private MenuItem playAction; 
+    @FXML
+    private MenuItem stopAction; 
+    
     /**
      * Boolean flags to control flow when user clicks in composition panel.
      */
@@ -182,6 +191,7 @@ public class TuneComposer extends Application {
      */
     @FXML
     private void handleClick(MouseEvent event) {
+        Collection<Playable> selectedPlayables = getSelectedPlayables(); 
         if (playLine.isPlaying()) {
             stopPlaying();
         }
@@ -190,7 +200,7 @@ public class TuneComposer extends Application {
             selection.endRectangle();
         }
         else if (clickInPane) {
-        	//System.out.println("else 2");
+            playAction.setDisable(false); 
             if (!event.isControlDown()) {
                 selectAll(false);
             }
@@ -198,10 +208,11 @@ public class TuneComposer extends Application {
             Instrument instrument = getInstrument();
             
             Note note = new Note(event.getX(), event.getY(), instrument);
-            AddNoteCommand noteaction = new AddNoteCommand(note);
+            AddNoteCommand noteaction = new AddNoteCommand(note,selectedPlayables);
             
             commandManager.add(noteaction);
-            //System.out.println(commandManager.undoSize());
+            undoAction.setDisable(false);
+            redoAction.setDisable(true); 
             
             noteaction.execute();
             notePane.getChildren().add(note.getRectangle());
@@ -222,16 +233,20 @@ public class TuneComposer extends Application {
         clickInPane = true;
         deleteAction.setDisable(false);
         selectAllAction.setDisable(false);
+        
+        if(selectedPlayables.size() > 1){
+            groupAction.setDisable(false);
+        }
+    }
+    
+    public Collection<Playable> getSelectedPlayables(){
         HashSet<Playable> selectedPlayables = new HashSet<Playable>();
     	allPlayables.forEach((n) -> {
             if (n.getSelected()) {
                 selectedPlayables.add(n);
             }
         });
-        if(selectedPlayables.size() > 1){
-            groupAction.setDisable(false);
-        }
-        //ungroupAction.setDisable(true);
+        return selectedPlayables; 
     }
   
     /**
@@ -278,18 +293,29 @@ public class TuneComposer extends Application {
     private void handleNoteStopDragging(MouseEvent event) {
         clickInPane = false;
         Collection<Playable> movedPlayables = new ArrayList(); 
+        Collection<Playable> stretchedPlayables = new ArrayList(); 
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
-                movedPlayables.add(n); 
                 if (changeDuration) {
-                    n.stopDuration(event);
+                    //n.stopDuration(event);
+                    stretchedPlayables.add(n); 
+                }
+                else{
+                    movedPlayables.add(n); 
                 }
             }
         });
         MoveCommand newcommand = new MoveCommand(movedPlayables, dragStart, event); 
         commandManager.add(newcommand); 
         newcommand.execute(); 
+        
+        StretchCommand stretchcommand = new StretchCommand(stretchedPlayables, dragStart, event); 
+        commandManager.add(stretchcommand); 
+        stretchcommand.execute(); 
         changeDuration = false;
+        
+        undoAction.setDisable(false); 
+        redoAction.setDisable(true); 
     }
 
     /**
@@ -358,9 +384,6 @@ public class TuneComposer extends Application {
                 }
             }
         });
-        //SelectCommand select = new SelectCommand(toSelect,true);
-        //commandManager.add(select);
-        //select.redo();
     }
     
     /**
@@ -380,6 +403,9 @@ public class TuneComposer extends Application {
 
         PLAYER.play();
         playLine.play(Note.lastNote);
+        
+        stopAction.setDisable(false); 
+        playAction.setDisable(true); 
     }
 
     /**
@@ -399,6 +425,9 @@ public class TuneComposer extends Application {
     private void stopPlaying() {
         PLAYER.stop();
         playLine.stop();
+        
+        stopAction.setDisable(true); 
+        playAction.setDisable(false); 
     }
 
     /**
@@ -435,6 +464,8 @@ public class TuneComposer extends Application {
         DeleteCommand deletecommand = new DeleteCommand(toDelete);
         deletecommand.execute();
         TuneComposer.commandManager.add(deletecommand);
+        undoAction.setDisable(false); 
+        redoAction.setDisable(true); 
         if(allPlayables.isEmpty()){
             deleteAction.setDisable(true);
             selectAllAction.setDisable(true);
@@ -454,6 +485,8 @@ public class TuneComposer extends Application {
         });
         SelectCommand select = new SelectCommand(toSelect,true);
         commandManager.add(select);
+        undoAction.setDisable(false);
+        redoAction.setDisable(true); 
         select.execute();
         System.out.println("Huh?");
     }
@@ -479,16 +512,20 @@ public class TuneComposer extends Application {
                 selectedPlayables.add(n);
             }
         });
-    	
+   
         Gesture group = new Gesture(selectedPlayables);
         selectedPlayables.add(group); 
         notePane.getChildren().add(group.getRectangle());
+        
         GroupCommand groupcommand = new GroupCommand(group);
         commandManager.add(groupcommand);
+        redoAction.setDisable(true); 
+        undoAction.setDisable(false); 
         groupcommand.execute();
+        
         group.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
-            handleNoteClick(pressedEvent, group);
-            handleNotePress(pressedEvent, group);
+            handleNoteClick(pressedEvent,group);
+            handleNotePress(pressedEvent,group);
         });
         
         group.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
@@ -498,8 +535,9 @@ public class TuneComposer extends Application {
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
         });
+        
         groupAction.setDisable(true);
-        //ungroupAction.setDisable(false);
+        ungroupAction.setDisable(false);
     }
     
     /**
@@ -507,7 +545,20 @@ public class TuneComposer extends Application {
      * gestures remain.
      */
     public void unGroup() {
-    	ArrayList<Playable> selectedGestures = new ArrayList<Playable>();
+    	ArrayList<Playable> topLevelGestures = getTopLevelGestures();
+    	for (Playable g : topLevelGestures) {
+    		notePane.getChildren().remove(g.getRectangle());
+    		allPlayables.remove(g);
+    	}
+        topLevelGestures = getTopLevelGestures(); 
+        if(topLevelGestures.size() == 0){
+            ungroupAction.setDisable(true);
+        }
+        groupAction.setDisable(false);
+    }
+ 
+    public ArrayList<Playable> getTopLevelGestures(){
+        ArrayList<Playable> selectedGestures = new ArrayList<Playable>();
     	ArrayList<Playable> topLevelGestures = new ArrayList<Playable>();
     	for (Playable p : allPlayables) {
     		if (p.isGesture() && p.getSelected()) {
@@ -526,14 +577,7 @@ public class TuneComposer extends Application {
     			topLevelGestures.add(g);
     		}
     	}
-    	for (Playable g : topLevelGestures) {
-    		notePane.getChildren().remove(g.getRectangle());
-    		allPlayables.remove(g);
-    	}
-        if(selectedGestures.size() == 1){
-            //ungroupAction.setDisable(true);
-        }
-        groupAction.setDisable(false);
+        return topLevelGestures; 
     }
     
     /**
@@ -561,6 +605,10 @@ public class TuneComposer extends Application {
     @FXML
     private void handleRedo(ActionEvent event){
         commandManager.redo();
+        if (commandManager.getRedoStackSize()< 1){
+            redoAction.setDisable(true); 
+        } 
+        undoAction.setDisable(false); 
     }
     
     /**
@@ -569,6 +617,10 @@ public class TuneComposer extends Application {
     @FXML
     private void handleUndo(ActionEvent event){
         commandManager.undo();
+        if (commandManager.getUndoStackSize()< 1){
+            undoAction.setDisable(true); 
+        }
+        redoAction.setDisable(false); 
     }
     
     /**
@@ -591,7 +643,11 @@ public class TuneComposer extends Application {
         deleteAction.setDisable(true);
         selectAllAction.setDisable(true);
         groupAction.setDisable(true);
-        //ungroupAction.setDisable(true);
+        ungroupAction.setDisable(true);
+        undoAction.setDisable(true); 
+        redoAction.setDisable(true); 
+        playAction.setDisable(true); 
+        stopAction.setDisable(true); 
     }
     
     /**
