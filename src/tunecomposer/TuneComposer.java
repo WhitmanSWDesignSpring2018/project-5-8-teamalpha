@@ -97,6 +97,8 @@ public class TuneComposer extends Application {
     
     public MouseEvent dragStart; 
     
+    public Collection<Playable> saveSelected = new ArrayList<Playable>(); 
+    
     
     /**
      * Plays notes that have been added.
@@ -174,15 +176,39 @@ public class TuneComposer extends Application {
         boolean control = event.isControlDown();
         boolean selected = playable.getSelected();
         
+        Collection<Playable> currentlySelected = getSelectedPlayables(); 
+        Collection<Playable> selectedPlayable = new ArrayList();
+        
         if (! control && ! selected) {
             selectAll(false);
-            playable.setSelected(true);
-        } else if (control && ! selected) {
-            playable.setSelected(true);
+            selectedPlayable.add(playable); 
             
+            SelectCommand selectcommand = new SelectCommand(selectedPlayable, currentlySelected, true,false);
+            commandManager.add(selectcommand);
+            selectcommand.execute(); 
+    
+
+            //playable.setSelected(true);
+        } else if (control && ! selected) {
+            //playable.setSelected(true);
+            selectedPlayable.add(playable); 
+            
+            SelectCommand selectcommand = new SelectCommand(selectedPlayable, currentlySelected, true, true);
+            commandManager.add(selectcommand); 
+            selectcommand.execute(); 
+       
+  
         } else if (control && selected) {
-            playable.setSelected(false);
+            //playable.setSelected(false);
+            selectedPlayable.add(playable); 
+            
+            SelectCommand selectcommand = new SelectCommand(selectedPlayable, currentlySelected, false, true); 
+            commandManager.add(selectcommand);
+            selectcommand.execute(); 
         }
+        
+        saveSelected = getSelectedPlayables(); 
+        
     }
     
     /**
@@ -192,12 +218,18 @@ public class TuneComposer extends Application {
     @FXML
     private void handleClick(MouseEvent event) {
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
+        
         if (playLine.isPlaying()) {
             stopPlaying();
         }
         else if (isDragSelecting){
             isDragSelecting = false;
             selection.endRectangle();
+            
+            SelectCommand selectcommand = new SelectCommand(selectedPlayables, saveSelected,true,false); 
+            commandManager.add(selectcommand);
+            selectcommand.execute(); 
+            
         }
         else if (clickInPane) {
             playAction.setDisable(false); 
@@ -209,6 +241,7 @@ public class TuneComposer extends Application {
             
             Note note = new Note(event.getX(), event.getY(), instrument);
             AddNoteCommand noteaction = new AddNoteCommand(note,selectedPlayables);
+            
             
             commandManager.add(noteaction);
             undoAction.setDisable(false);
@@ -237,6 +270,9 @@ public class TuneComposer extends Application {
         if(selectedPlayables.size() > 1){
             groupAction.setDisable(false);
         }
+        
+        saveSelected = getSelectedPlayables();
+        System.out.println(saveSelected.size());
     }
     
     public Collection<Playable> getSelectedPlayables(){
@@ -267,6 +303,7 @@ public class TuneComposer extends Application {
                 }
             }
         });
+       
     }
     
     /**
@@ -300,18 +337,24 @@ public class TuneComposer extends Application {
                     //n.stopDuration(event);
                     stretchedPlayables.add(n); 
                 }
-                else{
+                else if ((event.getX()-dragStart.getX() != 0) && (event.getY()-dragStart.getY() != 0)){
                     movedPlayables.add(n); 
                 }
             }
         });
-        MoveCommand newcommand = new MoveCommand(movedPlayables, dragStart, event); 
-        commandManager.add(newcommand); 
-        newcommand.execute(); 
         
-        StretchCommand stretchcommand = new StretchCommand(stretchedPlayables, dragStart, event); 
-        commandManager.add(stretchcommand); 
-        stretchcommand.execute(); 
+        if (!movedPlayables.isEmpty()) {
+            MoveCommand newcommand = new MoveCommand(movedPlayables, dragStart, event); 
+            commandManager.add(newcommand); 
+            newcommand.execute(); 
+        }
+        
+        if (!stretchedPlayables.isEmpty()) {
+            StretchCommand stretchcommand = new StretchCommand(stretchedPlayables, dragStart, event); 
+            commandManager.add(stretchcommand); 
+            stretchcommand.execute(); 
+        }
+        
         changeDuration = false;
         
         undoAction.setDisable(false); 
@@ -478,17 +521,24 @@ public class TuneComposer extends Application {
      */
     @FXML
     void handleSelectAll(ActionEvent event) {
+        Collection<Playable> currentlySelected = getSelectedPlayables(); 
         selectAll(true);
+        
         Collection toSelect = new ArrayList();
         allPlayables.forEach((playable)-> {
            toSelect.add(playable); 
         });
-        SelectCommand select = new SelectCommand(toSelect,true);
+        
+        SelectCommand select = new SelectCommand(toSelect, currentlySelected, true, false);
+        
         commandManager.add(select);
+        select.execute();
+        
         undoAction.setDisable(false);
         redoAction.setDisable(true); 
-        select.execute();
-        System.out.println("Huh?");
+        
+        saveSelected = getSelectedPlayables();
+       
     }
     
     /**
@@ -609,6 +659,10 @@ public class TuneComposer extends Application {
             redoAction.setDisable(true); 
         } 
         undoAction.setDisable(false); 
+        playAction.setDisable(false); 
+        selectAllAction.setDisable(false); 
+        deleteAction.setDisable(false); 
+        saveSelected = getSelectedPlayables();
     }
     
     /**
@@ -619,8 +673,14 @@ public class TuneComposer extends Application {
         commandManager.undo();
         if (commandManager.getUndoStackSize()< 1){
             undoAction.setDisable(true); 
+            deleteAction.setDisable(true); 
+            playAction.setDisable(true); 
+            selectAllAction.setDisable(true); 
+            
         }
         redoAction.setDisable(false); 
+        saveSelected = getSelectedPlayables();
+        System.out.println(saveSelected.size()); 
     }
     
     /**
