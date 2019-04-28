@@ -7,8 +7,6 @@ We wanted to have a buttonController and ClickController with their owm FXML fil
 
 We made it so that menu items are disabled when appropriate. 
 
-Edit: 
-
 ## **Elegancy:**
 Our Command Manager is by far the most elegant class in this project. This class does one thing, manages all 6 commands, and it does it well(Single Responsibility Principle). On the other side of the same principle, our tunecomposer class has many responsibilites making it quite inelegant as well as being lengthy. As noted in Design Overview, we tried to refactor into multiple different classes but ran into technical debt. Despites its inelegancy, TuneComposer is the only class that deals with and knows about the set of playables, gestures and notes, making it slightly less bad. In reference to the other classes, our Group Command and Add Note Command are essentially the same thing but one deals with gestures and the other with notes making it inelegant for having code duplication. 
 
