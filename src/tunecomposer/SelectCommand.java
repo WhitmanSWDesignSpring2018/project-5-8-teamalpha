@@ -13,37 +13,54 @@ import java.util.Collection;
  */
 public class SelectCommand implements Undoable {
     private Collection<Playable> playables;
-    boolean selected;
     
+    private Collection<Playable> previouslySelected; 
+    
+    private boolean selected; 
+    
+    private boolean previousSelected; 
+
     /**
      * Initializes the command from a set of Playables and a boolean representing
      * their selected state
      * @param set, the set of Playables
      * @param sel, a boolean representing their state
      */
-    public SelectCommand(Collection<Playable> set, boolean sel) {
+    public SelectCommand(Collection<Playable> set, Collection<Playable> previous, boolean sel, boolean previousSel) {
         playables = set;
-        selected = sel;
+        previouslySelected = previous; 
+        selected = sel; 
+        previousSelected = previousSel; 
     }
     
     public void execute(){
         redo(); 
     }
     /**
-     * Unselectes the Playables.
+     * Unselects the Playables.
      */
     public void undo() {
-        for (Playable p : playables) {
-            p.setSelected(!selected);
-        }
+        
+        playables.forEach((Playable) -> {
+            Playable.setSelected(!selected);
+        }); 
+        
+        previouslySelected.forEach((Playable) -> {
+            Playable.setSelected(!previousSelected);
+        }); 
+
     }
     
     /**
      * Selects the given Playables
      */
     public void redo() {
-        for (Playable p : playables) {
-            p.setSelected(selected);
-        }
+        previouslySelected.forEach((Playable) -> {
+            Playable.setSelected(previousSelected);
+        }); 
+        playables.forEach((Playable) -> {
+            Playable.setSelected(selected);
+        }); 
+        
     }
 }
