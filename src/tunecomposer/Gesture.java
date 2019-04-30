@@ -236,5 +236,13 @@ public class Gesture implements Playable {
      * @param event, the mouseClickEvent
      */
     public void stopDuration(MouseEvent event) {}
+    
+    public String toString(){
+        String playableString = new String(); 
+        for (Playable p: contents){
+            playableString = playableString + p.toString() + "\n"; 
+        }
+        return ("<gesture> \n"+ playableString + "</gesture> \n"); 
+    }
 
 }

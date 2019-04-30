@@ -51,5 +51,6 @@ public interface Playable {
     void unmove(double xDistance, double yDistance); 
     
     void stretch(double xDistance); 
+    
 
 }
