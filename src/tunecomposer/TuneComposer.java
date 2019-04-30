@@ -99,6 +99,8 @@ public class TuneComposer extends Application {
     
     public Collection<Playable> saveSelected = new ArrayList<Playable>(); 
     
+    public ClipboardWrapper clipboardWrapper = new ClipboardWrapper(); 
+    
     
     /**
      * Plays notes that have been added.
@@ -239,7 +241,7 @@ public class TuneComposer extends Application {
             
             Instrument instrument = getInstrument();
             
-            Note note = new Note(event.getX(), event.getY(), instrument);
+            Note note = new Note(event.getX(), event.getY(), instrument, 100);
             AddNoteCommand noteaction = new AddNoteCommand(note,selectedPlayables);
             
             
@@ -682,6 +684,40 @@ public class TuneComposer extends Application {
         saveSelected = getSelectedPlayables();
         System.out.println(saveSelected.size()); 
     }
+    
+    @FXML
+    private void handleCopy(ActionEvent event){
+        copy(); 
+    }
+    
+    private void copy(){
+        Collection<Playable> selectedPlayables = getSelectedPlayables(); 
+        clipboardWrapper.addToClipboard(selectedPlayables); 
+    }
+    
+    @FXML
+    private void handleCut(ActionEvent event){
+        cut(); 
+    }
+    
+    private void cut(){
+        Collection<Playable> selectedPlayables = getSelectedPlayables(); 
+        clipboardWrapper.addToClipboard(selectedPlayables);
+        for (Playable p : selectedPlayables) {
+            p.getRectangle().setVisible(false);
+        }
+        allPlayables.removeAll(selectedPlayables); //modify this for undoable 
+    }
+    
+    @FXML
+    private void handlePaste(ActionEvent event){
+        paste(); 
+    }
+    
+    private void paste(){
+        Collection<Playable> selectedPlayables = getSelectedPlayables(); 
+    }
+    
     
     /**
      * Initializes FXML. Called automatically.

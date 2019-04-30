@@ -6,7 +6,6 @@
 package tunecomposer;
 import java.util.Collection;
 import java.util.HashSet;
-
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -22,7 +21,7 @@ public class Note implements Playable {
      */
     private static final int VOLUME = 127;
     private static final int MAX_PITCH = 128;
-    private static final int DEFAULT_DURATION = 100;
+    //private static final int DEFAULT_DURATION = 100;
     private static final int TRACK = 0;
     
     /**
@@ -67,7 +66,7 @@ public class Note implements Playable {
      * @param y y-coordinate of new rectangle and pitch of note
      * @param inst instrument that the note should be played
      */
-    public Note(double x, double y, Instrument inst) {
+    public Note(double x, double y, Instrument inst, double width) {
         startTime = (int) x;
         pitch = MAX_PITCH - (int) y / RECTHEIGHT;
         
@@ -75,7 +74,7 @@ public class Note implements Playable {
         y_coord = y - ( y % RECTHEIGHT);
         
         instrument = inst;
-        rectWidth = DEFAULT_DURATION;
+        rectWidth = width;
         
         noteRect = new Rectangle(x_coord, y_coord, rectWidth, RECTHEIGHT);
         noteRect.getStyleClass().addAll("selected", instrument.toString());
@@ -284,4 +283,9 @@ public class Note implements Playable {
     public Collection getContents() {return new HashSet();}
     
     
+    public String toString(){
+        return "<note x=" + Double.toString(x_coord)+ " y=" + Double.toString(y_coord) 
+                + " instrument=" + Integer.toString(instrument.ordinal()) +" width="+ 
+                Double.toString(rectWidth)+ "/> \n";
+    }
 }
