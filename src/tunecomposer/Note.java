@@ -285,7 +285,7 @@ public class Note implements Playable {
     
     public String toString(){
         return "<note x=\"" + Double.toString(x_coord)+ "\" y=" + Double.toString(y_coord) 
-                + "\" instrument=\"" + Integer.toString(instrument.ordinal()) +"\" width=\""+ 
+                + "\" instrument=\"" + instrument +"\" width=\""+ 
                 Double.toString(rectWidth)+ "\" isSelected=\""+ Boolean.toString(isSelected)+ "\"/> \n";
     }
 }
