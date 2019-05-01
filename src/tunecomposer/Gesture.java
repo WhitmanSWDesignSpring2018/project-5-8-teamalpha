@@ -217,21 +217,21 @@ public class Gesture implements Playable {
     public boolean inLastFive(MouseEvent event) { return false; }
     
     /**
-     * Does nothing. Eventually may be implemented to allow for editin the 
+     * Does nothing. Eventually may be implemented to allow for editing the 
      * lengths of gestures.
      * @param event, the mouseClickEvent
      */
     public void setMovingDuration(MouseEvent event) {}
     
     /**
-     * Does nothing. Eventually may be implemented to allow for editin the 
+     * Does nothing. Eventually may be implemented to allow for editing the 
      * lengths of gestures.
      * @param event, the mouseClickEvent
      */
     public void moveDuration(MouseEvent event) {}
     
     /**
-     * Does nothing. Eventually may be implemented to allow for editin the 
+     * Does nothing. Eventually may be implemented to allow for editing the 
      * lengths of gestures.
      * @param event, the mouseClickEvent
      */
@@ -242,7 +242,7 @@ public class Gesture implements Playable {
         for (Playable p: contents){
             playableString = playableString + p.toString() + "\n"; 
         }
-        return ("<gesture> \n"+ playableString + "</gesture> \n"); 
+        return ("<gesture isSelected=\"" + Boolean.toString(isSelected) + "\"> \n"+ playableString + "</gesture> \n"); 
     }
 
 }

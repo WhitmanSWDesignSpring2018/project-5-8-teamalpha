@@ -33,8 +33,8 @@ public class ClipboardWrapper {
         
     }
     
-    public Collection<Playable> popFromClipboard(){
-        
-    }
+//    public Collection<Playable> popFromClipboard(){
+//        
+//    }
     
 }

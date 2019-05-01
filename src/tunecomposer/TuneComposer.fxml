@@ -26,6 +26,28 @@
         <menus>
           <Menu text="File">
             <items>
+              <MenuItem onAction="#handleAboutAction" text="About" >
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" 
+                                            meta="UP" shift="UP" 
+                                            shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              
+              <MenuItem onAction="#handleNewAction" text="New" >
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" 
+                                            meta="UP" shift="UP" 
+                                            shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              <MenuItem onAction="#handleSaveAction" text="Save" >
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" 
+                                            meta="UP" shift="UP" 
+                                            shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>   
               <MenuItem onAction="#handleExitMenuItemAction" text="Exit" >
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" 
