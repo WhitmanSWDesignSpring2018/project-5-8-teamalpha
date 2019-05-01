@@ -41,4 +41,18 @@ public enum Instrument {
                 default: throw new IllegalArgumentException();
             }
         }
+   
+        public Instrument toInstrument(String instrumentString) {
+            switch(instrumentString) {
+                case "piano":         return PIANO;
+                case"harpsichord":    return HARPSICHORD;
+                case "marimba":       return MARIMBA;
+                case "church-organ":  return CHURCH_ORGAN;
+                case "accordion":     return ACCORDION;
+                case "guitar":        return GUITAR;
+                case "violin":        return VIOLIN;
+                case "french-horn":   return FRENCH_HORN;
+                default: throw new IllegalArgumentException();
+            }
+        }
 }

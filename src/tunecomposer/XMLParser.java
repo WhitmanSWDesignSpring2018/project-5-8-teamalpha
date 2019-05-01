@@ -6,10 +6,11 @@
 package tunecomposer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import jdk.internal.org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,9 +22,11 @@ import org.w3c.dom.NodeList;
  */
 public class XMLParser {
     
-    public void initialize(){
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); 
+    Instrument tempInstrument;
     
+    public Collection<Playable> loadFile(){
+        Collection<Playable> = new ArrayList()<Playable>; 
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); 
         try{
             DocumentBuilder builder = factory.newDocumentBuilder(); 
             Document document = builder.parse("testfile.txt");  //get file name here
@@ -31,14 +34,9 @@ public class XMLParser {
             NodeList gestureList = document.getElementsByTagName("gesture");
             for (int i = 0; i<noteList.getLength(); i++){
                 Node n = noteList.item(i);
-                if (n.getNodeType() == Node.ELEMENT_NODE){
-                    Element note = (Element) n; 
-                    String x = note.getAttribute("x"); 
-                    String y = note.getAttribute("y"); 
-                    String instrument = note.getAttribute("instrument"); 
-                    String width = note.getAttribute("width"); 
-                    String isSelected = note.getAttribute("isSelected"); 
-                }
+                Element note = (Element) n; 
+                Playable newNote = parseNote(note);
+                   
             }
             for (int j = 0; j<gestureList.getLength(); j++){
                 Node g = gestureList.item(j);
@@ -47,21 +45,52 @@ public class XMLParser {
                     String isSelected = gesture.getAttribute("isSelected"); 
                     NodeList gestureChildrenList = g.getChildNodes();
                     for (int k=0; k<gestureChildrenList.getLength(); k++) {
-                        
                     }
                 }
             }
-        } catch (ParserConfigurationException e){
+        } catch (Exception e){
         
-        } catch (SAXException e){
-            
-        }catch (IOException e){
-            
         }
-        
-        
     }
     
+    public Playable parseGesture(Element gesture){
+        Boolean isSelected = Boolean.parseBoolean(gesture.getAttribute("isSelected")); 
+        NodeList gestureChildrenList = gesture.getChildNodes();
+        Collection<Playable> contents = nodesToPlayables(gestureChildrenList); 
+        Gesture newGesture = new Gesture(contents);
+        newGesture.setSelected(isSelected); 
+        return newGesture; 
+    }
     
+    public Playable parseNote(Element note){
+        Double x = Double.parseDouble(note.getAttribute("x")); 
+        Double y = Double.parseDouble(note.getAttribute("y")); 
+        Instrument instrument = tempInstrument.toInstrument(note.getAttribute("instrument")); 
+        Double width = Double.parseDouble(note.getAttribute("width")); 
+        Boolean isSelected = Boolean.parseBoolean(note.getAttribute("isSelected")); 
+        Note newNote = new Note(x,y,instrument,width);
+        newNote.setSelected(isSelected);
+        return newNote; 
+    }
     
+    public Collection<Playable> nodesToPlayables(NodeList playableNodes){
+        Collection<Playable> allPlayables = new ArrayList<Playable>(); 
+        for (int j = 0; j<playableNodes.getLength(); j++){
+            Node p = playableNodes.item(j);
+            Element playable = (Element) p; 
+            if (playable.getTagName() == "note" ){
+                Playable note = parseNote(playable); 
+                allPlayables.add(note); 
+            }
+            else{
+                Playable gesture = parseGesture(playable); 
+                allPlayables.add(gesture); 
+            }
+        }
+        return allPlayables;
+    }
 }
+    
+    
+    
+

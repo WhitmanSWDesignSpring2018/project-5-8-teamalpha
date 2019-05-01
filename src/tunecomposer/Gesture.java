@@ -49,7 +49,7 @@ public class Gesture implements Playable {
      * width of the rectangle from the contents
      * @param newContents, set of Playables to be included in the new gesture
      */
-    public Gesture(Set<Playable> newContents) {
+    public Gesture(Collection<Playable> newContents) {
         contents = new HashSet<Playable>(newContents); 
 
         ArrayList<Double> xList = new ArrayList<Double>(contents.size());

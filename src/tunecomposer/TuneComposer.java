@@ -759,9 +759,11 @@ public class TuneComposer extends Application {
     private void handleSaveAction(ActionEvent event){
         Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
         String noteString = ""; 
+        
         for (Playable p : topLevelPlayables) {
             noteString = noteString + p.toString() + "\n";
         }
+        noteString = "<composition> \n" + noteString + "</composition>"; 
         filesaver.newFile(noteString);
     }
     
