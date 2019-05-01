@@ -99,7 +99,9 @@ public class TuneComposer extends Application {
     
     public Collection<Playable> saveSelected = new ArrayList<Playable>(); 
     
-    public ClipboardWrapper clipboardWrapper = new ClipboardWrapper(); 
+    public ClipboardWrapper clipboardWrapper = new ClipboardWrapper();
+    
+    FileSaver filesaver = new FileSaver();  
     
     
     /**
@@ -608,7 +610,11 @@ public class TuneComposer extends Application {
         }
         groupAction.setDisable(false);
     }
- 
+    
+    
+     /**
+     * Returns gestures that are not contained in any other gestures
+     */
     public ArrayList<Playable> getTopLevelGestures(){
         ArrayList<Playable> selectedGestures = new ArrayList<Playable>();
     	ArrayList<Playable> topLevelGestures = new ArrayList<Playable>();
@@ -630,6 +636,26 @@ public class TuneComposer extends Application {
     		}
     	}
         return topLevelGestures; 
+    }
+    
+    /**
+     * Returns playables that are not contained in any playables
+     */
+    public ArrayList<Playable> getTopLevelPlayables(){
+    	ArrayList<Playable> topLevelPlayables = new ArrayList<Playable>();
+    	boolean isIn;
+    	for (Playable g : allPlayables) {
+    		isIn = false;
+    		for (Playable h : allPlayables) {
+    			if (h.getContents().contains(g)) {
+    				isIn = true;
+    			}
+    		}
+    		if (!isIn) {
+    			topLevelPlayables.add(g);
+    		}
+    	}
+        return topLevelPlayables; 
     }
     
     /**
@@ -719,6 +745,26 @@ public class TuneComposer extends Application {
     }
     
     
+    @FXML
+    private void handleAboutAction(ActionEvent event){
+        
+    }
+    
+    @FXML
+    private void handleNewAction(ActionEvent event){
+        
+    }
+    
+    @FXML
+    private void handleSaveAction(ActionEvent event){
+        Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
+        String noteString = ""; 
+        for (Playable p : topLevelPlayables) {
+            noteString = noteString + p.toString() + "\n";
+        }
+        filesaver.newFile(noteString);
+    }
+    
     /**
      * Initializes FXML. Called automatically.
      * (1) adds 127 gray lines to background
@@ -734,6 +780,8 @@ public class TuneComposer extends Application {
             row.getStyleClass().add("row-divider");
             background.getChildren().add(row);
         }
+        
+        
 
         selection = new SelectionArea(selectRect);
         deleteAction.setDisable(true);
