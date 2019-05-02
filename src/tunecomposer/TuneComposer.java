@@ -12,8 +12,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -24,6 +28,9 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.sound.midi.ShortMessage;
 import org.xml.sax.SAXException;
+
+
+//https://code.makery.ch/blog/javafx-dialogs-official/
 
 /**
  * This JavaFX app lets the user play scales.
@@ -754,12 +761,38 @@ public class TuneComposer extends Application {
     
     @FXML
     private void handleAboutAction(ActionEvent event){
-        
+        Alert aboutBox = new Alert(Alert.AlertType.INFORMATION);
+        aboutBox.setTitle("About TuneComposer");
+        aboutBox.setHeaderText(null);
+        aboutBox.setContentText("Welcome to TuneComposer!\nCreated by Angie,Abbey,Colin & Kimberly\nHave fun composing");
+        aboutBox.showAndWait();
     }
+    
+    
+    
+    
     
     @FXML
     private void handleNewAction(ActionEvent event){
-        
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("New");
+        alert.setHeaderText("Do you want to save the composition before making a new one?");
+        alert.setContentText("Choose your option:");
+
+        ButtonType buttonTypeOne = new ButtonType("Yes");
+        ButtonType buttonTypeTwo = new ButtonType("No");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeOne){
+            // ... user chose "One"
+        } else if (result.get() == buttonTypeTwo) {
+            // ... user chose "Two"
+        } else {
+            // ... user chose CANCEL or closed the dialog
+        }
     }
     
     @FXML
@@ -775,6 +808,15 @@ public class TuneComposer extends Application {
     
     @FXML
     private void handleSaveAction(ActionEvent event){
+        //only appear when it is the first time saving so we need to add an if 
+        TextInputDialog dialog = new TextInputDialog("filename.txt");
+        dialog.setTitle("Save As");
+        dialog.setHeaderText("Save your composition!");
+        dialog.setContentText("Filename:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait(); 
+        
         Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
         String noteString = ""; 
         
@@ -787,7 +829,13 @@ public class TuneComposer extends Application {
     
     @FXML
     private void handleSaveAsAction(ActionEvent event){
-        
+        TextInputDialog dialog = new TextInputDialog("filename.txt");
+        dialog.setTitle("Save As");
+        dialog.setHeaderText("Save your composition!");
+        dialog.setContentText("Filename:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait(); 
     }
     
     /**
