@@ -30,6 +30,7 @@ import javax.sound.midi.ShortMessage;
 import org.xml.sax.SAXException;
 
 
+//website where we got information about different types of dialog boxes 
 //https://code.makery.ch/blog/javafx-dialogs-official/
 
 /**
@@ -506,7 +507,25 @@ public class TuneComposer extends Application {
      */
     @FXML
     protected void handleExitMenuItemAction(ActionEvent event) {
-        System.exit(0);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit");
+        alert.setHeaderText("Are you sure you want to exit without saving?");
+        alert.setContentText("Choose your option:");
+
+        ButtonType buttonTypeYes = new ButtonType("Yes");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeYes){
+            System.exit(0);
+        } else if (result.get() == buttonTypeNo) {
+            // ... user chose "Two"
+        } else {
+            // ... user chose CANCEL or closed the dialog
+        } 
     }
     
     /**
