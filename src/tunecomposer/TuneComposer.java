@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.sound.midi.ShortMessage;
+import org.xml.sax.SAXException;
 
 /**
  * This JavaFX app lets the user play scales.
@@ -103,6 +104,8 @@ public class TuneComposer extends Application {
     
     FileSaver filesaver = new FileSaver();  
     
+    XMLParser xmlparser = new XMLParser(); 
+    
     
     /**
      * Plays notes that have been added.
@@ -125,6 +128,10 @@ public class TuneComposer extends Application {
     private MenuItem playAction; 
     @FXML
     private MenuItem stopAction; 
+    @FXML
+    private MenuItem openAction; 
+    @FXML
+    private MenuItem saveAsAction; 
     
     /**
      * Boolean flags to control flow when user clicks in composition panel.
@@ -756,6 +763,17 @@ public class TuneComposer extends Application {
     }
     
     @FXML
+    private void handleOpenAction(ActionEvent event) throws SAXException, IOException{
+        playAction.setDisable(false); 
+        Collection<Playable> loadedPlayables = xmlparser.loadFile(); 
+        System.out.println(loadedPlayables.size()); 
+        for (Playable p : loadedPlayables){
+            notePane.getChildren().add(p.getRectangle()); 
+            allPlayables.add(p); 
+        }
+    }
+    
+    @FXML
     private void handleSaveAction(ActionEvent event){
         Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
         String noteString = ""; 
@@ -765,6 +783,11 @@ public class TuneComposer extends Application {
         }
         noteString = "<composition> \n" + noteString + "</composition>"; 
         filesaver.newFile(noteString);
+    }
+    
+    @FXML
+    private void handleSaveAsAction(ActionEvent event){
+        
     }
     
     /**
@@ -782,9 +805,6 @@ public class TuneComposer extends Application {
             row.getStyleClass().add("row-divider");
             background.getChildren().add(row);
         }
-        
-        
-
         selection = new SelectionArea(selectRect);
         deleteAction.setDisable(true);
         selectAllAction.setDisable(true);
