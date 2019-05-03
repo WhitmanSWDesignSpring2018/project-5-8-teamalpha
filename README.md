@@ -23,5 +23,6 @@ It was hard for all us to meet together, and most of our work time was spent in 
 
 Project 7:
 You can save blank compositions!
+
 Project 8:
 Warn the user if they will override a file
