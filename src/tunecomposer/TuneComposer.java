@@ -142,6 +142,10 @@ public class TuneComposer extends Application {
     private MenuItem openAction; 
     @FXML
     private MenuItem saveAsAction; 
+    @FXML
+    private MenuItem saveAction; 
+    @FXML
+    private MenuItem newAction; 
     
     /**
      * Boolean flags to control flow when user clicks in composition panel.
@@ -222,7 +226,9 @@ public class TuneComposer extends Application {
             selectcommand.execute(); 
         }
         saveSelected = getSelectedPlayables(); 
-        isSaved = false; 
+        isSaved = false;
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -280,6 +286,8 @@ public class TuneComposer extends Application {
         }
         saveSelected = getSelectedPlayables();
         isSaved = false;
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     public Collection<Playable> getSelectedPlayables(){
@@ -364,6 +372,8 @@ public class TuneComposer extends Application {
         undoAction.setDisable(false); 
         redoAction.setDisable(true); 
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
 
     /**
@@ -433,6 +443,8 @@ public class TuneComposer extends Application {
             }
         });
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -542,6 +554,8 @@ public class TuneComposer extends Application {
             selectAllAction.setDisable(true);
         }
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -568,6 +582,8 @@ public class TuneComposer extends Application {
         
         saveSelected = getSelectedPlayables();
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -617,7 +633,9 @@ public class TuneComposer extends Application {
         
         groupAction.setDisable(true);
         ungroupAction.setDisable(false);
-        isSaved = false; 
+        isSaved = false;
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -636,6 +654,8 @@ public class TuneComposer extends Application {
         }
         groupAction.setDisable(false);
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     
@@ -719,6 +739,8 @@ public class TuneComposer extends Application {
         deleteAction.setDisable(false); 
         saveSelected = getSelectedPlayables();
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -736,6 +758,8 @@ public class TuneComposer extends Application {
         redoAction.setDisable(false); 
         saveSelected = getSelectedPlayables();
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -776,6 +800,8 @@ public class TuneComposer extends Application {
         }
         allPlayables.removeAll(selectedPlayables); //modify this for undoable 
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -793,6 +819,8 @@ public class TuneComposer extends Application {
     private void paste(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
         isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
   
     /**
@@ -927,7 +955,9 @@ public class TuneComposer extends Application {
             noteString = "<composition> \n" + noteString + "</composition>"; 
             filesaver.newFile(noteString,savedFilename);
         }
-        isSaved = true; 
+        isSaved = true;
+        saveAction.setDisable(true); 
+        saveAsAction.setDisable(true);
     }
     
     /**
@@ -962,6 +992,8 @@ public class TuneComposer extends Application {
         filesaver.newFile(noteString,result.get());
         savedFilename = result.get(); 
         isSaved = true; 
+        saveAction.setDisable(true); 
+        saveAsAction.setDisable(true); 
     }
     
     /**
@@ -988,6 +1020,9 @@ public class TuneComposer extends Application {
         redoAction.setDisable(true); 
         playAction.setDisable(true); 
         stopAction.setDisable(true); 
+        
+        saveAction.setDisable(true); 
+        saveAsAction.setDisable(true); 
         
         savedFilename = "new"; 
     }
