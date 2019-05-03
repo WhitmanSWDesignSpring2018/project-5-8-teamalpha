@@ -21,5 +21,6 @@ Since the original deadline, we have spent an additional 20 person hours trying 
 It was hard for all us to meet together, and most of our work time was spent in groups of two or three people who were available at a given time. This made it hard to get a decent planned design that we all agreed on. Also because we met in groups of two or three, it meant that those who were not there got left out of the loop which led to confusion about the project's direction. In the future we will work on projects everyday from day 1 till it is due.
 
 
-
+Project 7:
+You can save blank compositions!
 
