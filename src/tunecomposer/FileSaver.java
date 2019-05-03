@@ -19,12 +19,13 @@ public class FileSaver {
     
     Scanner scanner = new Scanner(System.in); 
     
-//    public String getFileName(){
-//        
-//    }
-    
-    public void newFile(String textfile){
-        File file = new File("/home/taylorkm/Documents/" + "testfile"+ ".txt"); 
+    /**
+     * Creates and writes to a new file.
+     * @param textfile, the String to be written to the file
+     * @param filename, the name of the new file
+     */
+    public void newFile(String textfile, String filename){
+        File file = new File("/home/taylorkm/Documents/" + filename + ".txt"); 
         try{
             file.createNewFile(); 
             
@@ -32,9 +33,6 @@ public class FileSaver {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(textfile); 
             bw.close();
-            
-            System.out.println("something");
-                    
         }
         catch (IOException e){
             

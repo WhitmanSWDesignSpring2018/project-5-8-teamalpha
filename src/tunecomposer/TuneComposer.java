@@ -3,6 +3,7 @@
  */
 package tunecomposer;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javafx.application.Application;
@@ -24,6 +25,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.sound.midi.ShortMessage;
@@ -114,7 +117,6 @@ public class TuneComposer extends Application {
     
     XMLParser xmlparser = new XMLParser(); 
     
-    
     /**
      * Plays notes that have been added.
      * Called when the Play button is clicked.
@@ -140,6 +142,10 @@ public class TuneComposer extends Application {
     private MenuItem openAction; 
     @FXML
     private MenuItem saveAsAction; 
+    @FXML
+    private MenuItem saveAction; 
+    @FXML
+    private MenuItem newAction; 
     
     /**
      * Boolean flags to control flow when user clicks in composition panel.
@@ -147,6 +153,10 @@ public class TuneComposer extends Application {
     private boolean clickInPane = true;
     private boolean changeDuration = false;
     private boolean isDragSelecting = false;
+  
+    private Stage stage;
+    public boolean isSaved = true;
+    public String savedFilename; 
 
     /**
      * Constructor initializes the set of allPlayables.
@@ -201,33 +211,24 @@ public class TuneComposer extends Application {
         if (! control && ! selected) {
             selectAll(false);
             selectedPlayable.add(playable); 
-            
             SelectCommand selectcommand = new SelectCommand(selectedPlayable, currentlySelected, true,false);
             commandManager.add(selectcommand);
             selectcommand.execute(); 
-    
-
-            //playable.setSelected(true);
         } else if (control && ! selected) {
-            //playable.setSelected(true);
             selectedPlayable.add(playable); 
-            
             SelectCommand selectcommand = new SelectCommand(selectedPlayable, currentlySelected, true, true);
             commandManager.add(selectcommand); 
             selectcommand.execute(); 
-       
-  
         } else if (control && selected) {
-            //playable.setSelected(false);
             selectedPlayable.add(playable); 
-            
             SelectCommand selectcommand = new SelectCommand(selectedPlayable, currentlySelected, false, true); 
             commandManager.add(selectcommand);
             selectcommand.execute(); 
         }
-        
         saveSelected = getSelectedPlayables(); 
-        
+        isSaved = false;
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -255,13 +256,9 @@ public class TuneComposer extends Application {
             if (!event.isControlDown()) {
                 selectAll(false);
             }
-            
             Instrument instrument = getInstrument();
-            
             Note note = new Note(event.getX(), event.getY(), instrument, 100);
             AddNoteCommand noteaction = new AddNoteCommand(note,selectedPlayables);
-            
-            
             commandManager.add(noteaction);
             undoAction.setDisable(false);
             redoAction.setDisable(true); 
@@ -273,11 +270,9 @@ public class TuneComposer extends Application {
                 handleNoteClick(pressedEvent, note);
                 handleNotePress(pressedEvent, note);
             });
-            
             note.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
                 handleNoteDrag(dragEvent);
             });
-            
             note.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
                 handleNoteStopDragging(releaseEvent);
             });
@@ -289,9 +284,10 @@ public class TuneComposer extends Application {
         if(selectedPlayables.size() > 1){
             groupAction.setDisable(false);
         }
-        
         saveSelected = getSelectedPlayables();
-        System.out.println(saveSelected.size());
+        isSaved = false;
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     public Collection<Playable> getSelectedPlayables(){
@@ -321,8 +317,7 @@ public class TuneComposer extends Application {
                     n.setMovingCoords(event);
                 }
             }
-        });
-       
+        }); 
     }
     
     /**
@@ -361,7 +356,6 @@ public class TuneComposer extends Application {
                 }
             }
         });
-        
         if (!movedPlayables.isEmpty()) {
             MoveCommand newcommand = new MoveCommand(movedPlayables, dragStart, event); 
             commandManager.add(newcommand); 
@@ -373,11 +367,13 @@ public class TuneComposer extends Application {
             commandManager.add(stretchcommand); 
             stretchcommand.execute(); 
         }
-        
         changeDuration = false;
         
         undoAction.setDisable(false); 
         redoAction.setDisable(true); 
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
 
     /**
@@ -446,6 +442,9 @@ public class TuneComposer extends Application {
                 }
             }
         });
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -509,9 +508,8 @@ public class TuneComposer extends Application {
     protected void handleExitMenuItemAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit");
-        alert.setHeaderText("Are you sure you want to exit without saving?");
-        alert.setContentText("Choose your option:");
-
+        alert.setHeaderText("Do you want to save before exiting?");
+      
         ButtonType buttonTypeYes = new ButtonType("Yes");
         ButtonType buttonTypeNo = new ButtonType("No");
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
@@ -520,9 +518,14 @@ public class TuneComposer extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonTypeYes){
-            System.exit(0);
+            if (savedFilename.equals("new")){
+                saveAs(); 
+            }
+            else{ //file has not been saved before
+                save(); 
+            }
         } else if (result.get() == buttonTypeNo) {
-            // ... user chose "Two"
+            System.exit(0); 
         } else {
             // ... user chose CANCEL or closed the dialog
         } 
@@ -550,6 +553,9 @@ public class TuneComposer extends Application {
             deleteAction.setDisable(true);
             selectAllAction.setDisable(true);
         }
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -575,7 +581,9 @@ public class TuneComposer extends Application {
         redoAction.setDisable(true); 
         
         saveSelected = getSelectedPlayables();
-       
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -625,6 +633,9 @@ public class TuneComposer extends Application {
         
         groupAction.setDisable(true);
         ungroupAction.setDisable(false);
+        isSaved = false;
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -642,6 +653,9 @@ public class TuneComposer extends Application {
             ungroupAction.setDisable(true);
         }
         groupAction.setDisable(false);
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     
@@ -678,15 +692,15 @@ public class TuneComposer extends Application {
     	ArrayList<Playable> topLevelPlayables = new ArrayList<Playable>();
     	boolean isIn;
     	for (Playable g : allPlayables) {
-    		isIn = false;
-    		for (Playable h : allPlayables) {
-    			if (h.getContents().contains(g)) {
-    				isIn = true;
-    			}
-    		}
-    		if (!isIn) {
-    			topLevelPlayables.add(g);
-    		}
+            isIn = false;
+            for (Playable h : allPlayables) {
+                    if (h.getContents().contains(g)) {
+                            isIn = true;
+                    }
+            }
+            if (!isIn) {
+                    topLevelPlayables.add(g);
+            }
     	}
         return topLevelPlayables; 
     }
@@ -724,6 +738,9 @@ public class TuneComposer extends Application {
         selectAllAction.setDisable(false); 
         deleteAction.setDisable(false); 
         saveSelected = getSelectedPlayables();
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
     /**
@@ -737,28 +754,44 @@ public class TuneComposer extends Application {
             deleteAction.setDisable(true); 
             playAction.setDisable(true); 
             selectAllAction.setDisable(true); 
-            
         }
         redoAction.setDisable(false); 
         saveSelected = getSelectedPlayables();
-        System.out.println(saveSelected.size()); 
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
+    /**
+     * Handles the copying action.
+     * @param event, the copy MenuItem event
+     */
     @FXML
     private void handleCopy(ActionEvent event){
         copy(); 
     }
     
+    /**
+     * Uses the clipboardWrapper to add the selectedPlayables to the clipboard.
+     */
     private void copy(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
         clipboardWrapper.addToClipboard(selectedPlayables); 
     }
     
+    /**
+     * Handles the cutting action.
+     * @param event, the cut MenuItem event
+     */
     @FXML
     private void handleCut(ActionEvent event){
         cut(); 
     }
     
+    /**
+     * Uses the clipboardWrapper to add the selected playables to the clipboard
+     * and removes them from the current composition.
+     */
     private void cut(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
         clipboardWrapper.addToClipboard(selectedPlayables);
@@ -766,18 +799,34 @@ public class TuneComposer extends Application {
             p.getRectangle().setVisible(false);
         }
         allPlayables.removeAll(selectedPlayables); //modify this for undoable 
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
     
+    /**
+     * Handles the paste action.
+     * @param event, the paste MenuItem event
+     */
     @FXML
     private void handlePaste(ActionEvent event){
         paste(); 
     }
     
+    /**
+     * ???? add javadoc
+     */
     private void paste(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
+        isSaved = false; 
+        saveAction.setDisable(false); 
+        saveAsAction.setDisable(false);
     }
-    
-    
+  
+    /**
+     * Opens a window displaying information about the program.
+     * @param event, the about MenuItem event
+     */
     @FXML
     private void handleAboutAction(ActionEvent event){
         Alert aboutBox = new Alert(Alert.AlertType.INFORMATION);
@@ -786,75 +835,165 @@ public class TuneComposer extends Application {
         aboutBox.setContentText("Welcome to TuneComposer!\nCreated by Angie,Abbey,Colin & Kimberly\nHave fun composing");
         aboutBox.showAndWait();
     }
-    
-    
-    
-    
-    
+ 
+    /**
+     * Opens a new blank composition. If the current composition is not saved, 
+     * opens a dialogue to ask if you want to save it and calls save or saveAs as
+     * appropriate.
+     * @param event, the new MenuItem event 
+     */
     @FXML
     private void handleNewAction(ActionEvent event){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("New");
-        alert.setHeaderText("Do you want to save the composition before making a new one?");
-        alert.setContentText("Choose your option:");
+        if (!isSaved){
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("New");
+            alert.setHeaderText("Do you want to save your current composition before opening a new file?");
 
-        ButtonType buttonTypeOne = new ButtonType("Yes");
-        ButtonType buttonTypeTwo = new ButtonType("No");
-        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            ButtonType buttonTypeYes = new ButtonType("Yes");
+            ButtonType buttonTypeNo = new ButtonType("No");
+            ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 
-        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+            alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonTypeOne){
-            // ... user chose "One"
-        } else if (result.get() == buttonTypeTwo) {
-            // ... user chose "Two"
-        } else {
-            // ... user chose CANCEL or closed the dialog
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonTypeYes){
+                if (savedFilename.equals("new")){
+                    saveAs(); 
+                }
+                else { //the file has been saved before
+                   save(); 
+                }
+            } else if (result.get() == buttonTypeNo) {
+                
+            } else {
+                return; 
+            }
+            
+            allPlayables.clear();
+            notePane.getChildren().clear();
+            playAction.setDisable(true);   
         }
     }
     
+    /**
+     * Opens a saved composition file. If the current composition is not saved,
+     * opens a dialogue asking if you want to save before opening.
+     * @param event, the open MenuItem event
+     * @throws SAXException
+     * @throws IOException 
+     */
     @FXML
     private void handleOpenAction(ActionEvent event) throws SAXException, IOException{
-        playAction.setDisable(false); 
-        Collection<Playable> loadedPlayables = xmlparser.loadFile(); 
-        System.out.println(loadedPlayables.size()); 
-        for (Playable p : loadedPlayables){
-            notePane.getChildren().add(p.getRectangle()); 
-            allPlayables.add(p); 
+        if (!isSaved){
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Open");
+            alert.setHeaderText("Do you want to save your current composition before opening a saved file?");
+
+            ButtonType buttonTypeYes = new ButtonType("Yes");
+            ButtonType buttonTypeNo = new ButtonType("No");
+            ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonTypeYes){
+                if (savedFilename.equals("new")){
+                    saveAs(); 
+                }
+                else{ //file has not been saved before
+                   save(); 
+                }
+            } else if (result.get() == buttonTypeNo) {
+
+            } else {
+                return; 
+            }
         }
+        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(
+        new ExtensionFilter("Text Files", "*.txt"));
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            allPlayables.clear();
+            notePane.getChildren().clear();
+            playAction.setDisable(false); 
+            Collection<Playable> loadedPlayables = xmlparser.loadFile(selectedFile); 
+            for (Playable p : loadedPlayables){
+                notePane.getChildren().add(p.getRectangle()); 
+                allPlayables.add(p); 
+            }
+        } 
     }
     
+    /**
+     * Handles the save MenuItem action.
+     * @param event, the save MenuItem event
+     */
     @FXML
     private void handleSaveAction(ActionEvent event){
-        //only appear when it is the first time saving so we need to add an if 
-        TextInputDialog dialog = new TextInputDialog("filename.txt");
+        save(); 
+    }
+    
+    /**
+     * Saves the current composition. If it has not previously been saved, calls
+     * saveAs to name the file. Turns the composition into a string and passes 
+     * it to the filesaver.
+     */
+    private void save(){
+        if (savedFilename.equals("new")){
+            saveAs(); 
+        }
+        else{
+            Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
+            String noteString = ""; 
+
+            for (Playable p : topLevelPlayables) {
+                noteString = noteString + p.toString() + "\n";
+            }
+            noteString = "<composition> \n" + noteString + "</composition>"; 
+            filesaver.newFile(noteString,savedFilename);
+        }
+        isSaved = true;
+        saveAction.setDisable(true); 
+        saveAsAction.setDisable(true);
+    }
+    
+    /**
+     * Handles the save as MenuItem action.
+     * @param event, the saveAs MenuItem event
+     */
+    @FXML
+    private void handleSaveAsAction(ActionEvent event){
+        saveAs();  
+    }
+    
+    /**
+     * Saves the current composition. Opens a dialogue to allow the user to name
+     * the file whatever they want, it and the composition to the filesaver
+     */
+    private void saveAs(){
+        TextInputDialog dialog = new TextInputDialog("filename");
         dialog.setTitle("Save As");
-        dialog.setHeaderText("Save your composition!");
-        dialog.setContentText("Filename:");
+        dialog.setHeaderText("Save your composition");
+        dialog.setContentText("Filename (without .txt)");
 
         // Traditional way to get the response value.
         Optional<String> result = dialog.showAndWait(); 
         
         Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
         String noteString = ""; 
-        
+
         for (Playable p : topLevelPlayables) {
             noteString = noteString + p.toString() + "\n";
         }
         noteString = "<composition> \n" + noteString + "</composition>"; 
-        filesaver.newFile(noteString);
-    }
-    
-    @FXML
-    private void handleSaveAsAction(ActionEvent event){
-        TextInputDialog dialog = new TextInputDialog("filename.txt");
-        dialog.setTitle("Save As");
-        dialog.setHeaderText("Save your composition!");
-        dialog.setContentText("Filename:");
-
-        // Traditional way to get the response value.
-        Optional<String> result = dialog.showAndWait(); 
+        filesaver.newFile(noteString,result.get());
+        savedFilename = result.get(); 
+        isSaved = true; 
+        saveAction.setDisable(true); 
+        saveAsAction.setDisable(true); 
     }
     
     /**
@@ -881,6 +1020,11 @@ public class TuneComposer extends Application {
         redoAction.setDisable(true); 
         playAction.setDisable(true); 
         stopAction.setDisable(true); 
+        
+        saveAction.setDisable(true); 
+        saveAsAction.setDisable(true); 
+        
+        savedFilename = "new"; 
     }
     
     /**
@@ -892,7 +1036,7 @@ public class TuneComposer extends Application {
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("TuneComposer.fxml"));
         Scene scene = new Scene(root);
-
+        stage = primaryStage; 
         primaryStage.setTitle("Scale Player");
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest((WindowEvent we) -> {
