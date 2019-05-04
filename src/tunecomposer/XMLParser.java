@@ -7,6 +7,7 @@ package tunecomposer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.xml.parsers.DocumentBuilder;
@@ -16,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 
 /**
@@ -68,6 +70,40 @@ public class XMLParser {
         }
         return playablesToLoad; 
     }
+    
+    public Collection<Playable> loadFile(String XMLString) throws org.xml.sax.SAXException, IOException{
+        Collection<Playable> playablesToLoad = new ArrayList<Playable>(); 
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); 
+        try{
+            DocumentBuilder builder = factory.newDocumentBuilder(); 
+            Document document = builder.parse(new InputSource(new StringReader(XMLString))); 
+            System.out.println(document);
+            NodeList noteList = document.getElementsByTagName("note");
+            NodeList gestureList = document.getElementsByTagName("gesture");
+
+            for (int i = 0; i<noteList.getLength(); i++) {
+                Node n = noteList.item(i);
+                if (n.getNodeType() == Node.ELEMENT_NODE){
+                Element note = (Element) n; 
+                Playable newNote = parseNote(note);
+                playablesToLoad.add(newNote); 
+                }
+            }
+            for (int j = 0; j<gestureList.getLength(); j++){
+                Node g = gestureList.item(j);
+                Element gesture = (Element) g; 
+                Playable newGesture = parseGesture(gesture); 
+                playablesToLoad.add(newGesture); 
+            
+            }
+            System.out.println(playablesToLoad.size());
+        } catch (ParserConfigurationException e){
+        System.out.println("exception");
+        }
+        return playablesToLoad; 
+}
+    
+    
     
     /**
      * Turns the given element into a gesture. Calls nodesToPlayables recursively

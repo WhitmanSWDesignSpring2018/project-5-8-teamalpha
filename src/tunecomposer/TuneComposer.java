@@ -147,6 +147,13 @@ public class TuneComposer extends Application {
     @FXML
     private MenuItem newAction; 
     
+    @FXML
+    private MenuItem pasteAction; 
+    @FXML
+    private MenuItem copyAction; 
+    @FXML
+    private MenuItem cutAction; 
+    
     /**
      * Boolean flags to control flow when user clicks in composition panel.
      */
@@ -229,6 +236,7 @@ public class TuneComposer extends Application {
         isSaved = false;
         saveAction.setDisable(false); 
         saveAsAction.setDisable(false);
+        
     }
     
     /**
@@ -288,6 +296,9 @@ public class TuneComposer extends Application {
         isSaved = false;
         saveAction.setDisable(false); 
         saveAsAction.setDisable(false);
+        
+        copyAction.setDisable(false); 
+        cutAction.setDisable(false); 
     }
     
     public Collection<Playable> getSelectedPlayables(){
@@ -776,7 +787,9 @@ public class TuneComposer extends Application {
      */
     private void copy(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
-        clipboardWrapper.addToClipboard(selectedPlayables); 
+        clipboardWrapper.pushToClipboard(selectedPlayables); 
+        
+        pasteAction.setDisable(false); 
     }
     
     /**
@@ -794,12 +807,13 @@ public class TuneComposer extends Application {
      */
     private void cut(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
-        clipboardWrapper.addToClipboard(selectedPlayables);
+        clipboardWrapper.pushToClipboard(selectedPlayables);
         for (Playable p : selectedPlayables) {
             p.getRectangle().setVisible(false);
         }
         allPlayables.removeAll(selectedPlayables); //modify this for undoable 
         isSaved = false; 
+        pasteAction.setDisable(false); 
         saveAction.setDisable(false); 
         saveAsAction.setDisable(false);
     }
@@ -809,16 +823,39 @@ public class TuneComposer extends Application {
      * @param event, the paste MenuItem event
      */
     @FXML
-    private void handlePaste(ActionEvent event){
+    private void handlePaste(ActionEvent event) throws SAXException, IOException{
         paste(); 
     }
     
     /**
      * ???? add javadoc
      */
-    private void paste(){
+    private void paste() throws SAXException, IOException{
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
+        for (Playable p : selectedPlayables) {
+            p.setSelected(false); 
+        }
+        Collection<Playable> pastedPlayables = clipboardWrapper.popFromClipboard();  
+        allPlayables.addAll(pastedPlayables); 
+        for (Playable p : pastedPlayables) {
+            notePane.getChildren().add(p.getRectangle());
+            
+            p.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
+                handleNoteClick(pressedEvent, p);
+                handleNotePress(pressedEvent, p);
+            });
+            p.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
+                handleNoteDrag(dragEvent);
+            });
+            p.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
+                handleNoteStopDragging(releaseEvent);
+            });
+            p.getRectangle().setVisible(true);
+        }   
+        
+        System.out.println("numPlayables: " + allPlayables.size());
         isSaved = false; 
+        
         saveAction.setDisable(false); 
         saveAsAction.setDisable(false);
     }
@@ -981,8 +1018,8 @@ public class TuneComposer extends Application {
 
         // Traditional way to get the response value.
         Optional<String> result = dialog.showAndWait(); 
-        
-        Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
+        if (result != null){
+           Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
         String noteString = ""; 
 
         for (Playable p : topLevelPlayables) {
@@ -992,8 +1029,13 @@ public class TuneComposer extends Application {
         filesaver.newFile(noteString,result.get());
         savedFilename = result.get(); 
         isSaved = true; 
+        
         saveAction.setDisable(true); 
-        saveAsAction.setDisable(true); 
+        saveAsAction.setDisable(true);  
+        }
+       
+        
+        
     }
     
     /**
@@ -1023,6 +1065,10 @@ public class TuneComposer extends Application {
         
         saveAction.setDisable(true); 
         saveAsAction.setDisable(true); 
+        
+        pasteAction.setDisable(true); 
+        copyAction.setDisable(true); 
+        cutAction.setDisable(true); 
         
         savedFilename = "new"; 
     }
