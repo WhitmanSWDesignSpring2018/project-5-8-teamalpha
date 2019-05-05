@@ -77,7 +77,6 @@ public class XMLParser {
         try{
             DocumentBuilder builder = factory.newDocumentBuilder(); 
             Document document = builder.parse(new InputSource(new StringReader(XMLString))); 
-            System.out.println(document);
             NodeList noteList = document.getElementsByTagName("note");
             NodeList gestureList = document.getElementsByTagName("gesture");
 
@@ -96,9 +95,9 @@ public class XMLParser {
                 playablesToLoad.add(newGesture); 
             
             }
-            System.out.println(playablesToLoad.size());
+           
         } catch (ParserConfigurationException e){
-        System.out.println("exception");
+       
         }
         return playablesToLoad; 
 }

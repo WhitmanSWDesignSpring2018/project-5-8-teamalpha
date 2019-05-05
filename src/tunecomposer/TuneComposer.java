@@ -808,10 +808,11 @@ public class TuneComposer extends Application {
     private void cut(){
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
         clipboardWrapper.pushToClipboard(selectedPlayables);
-        for (Playable p : selectedPlayables) {
-            p.getRectangle().setVisible(false);
-        }
-        allPlayables.removeAll(selectedPlayables); //modify this for undoable 
+        
+        CutCommand cutCommand = new CutCommand(selectedPlayables); 
+        commandManager.add(cutCommand); 
+        cutCommand.execute();
+        
         isSaved = false; 
         pasteAction.setDisable(false); 
         saveAction.setDisable(false); 
@@ -836,7 +837,7 @@ public class TuneComposer extends Application {
             p.setSelected(false); 
         }
         Collection<Playable> pastedPlayables = clipboardWrapper.popFromClipboard();  
-        allPlayables.addAll(pastedPlayables); 
+     
         for (Playable p : pastedPlayables) {
             notePane.getChildren().add(p.getRectangle());
             
@@ -850,10 +851,13 @@ public class TuneComposer extends Application {
             p.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
                 handleNoteStopDragging(releaseEvent);
             });
-            p.getRectangle().setVisible(true);
+          
         }   
         
-        System.out.println("numPlayables: " + allPlayables.size());
+        PasteCommand pasteCommand = new PasteCommand(pastedPlayables); 
+        commandManager.add(pasteCommand); 
+        pasteCommand.execute();
+
         isSaved = false; 
         
         saveAction.setDisable(false); 
@@ -960,6 +964,18 @@ public class TuneComposer extends Application {
             for (Playable p : loadedPlayables){
                 notePane.getChildren().add(p.getRectangle()); 
                 allPlayables.add(p); 
+                p.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
+                handleNoteClick(pressedEvent,p);
+                handleNotePress(pressedEvent,p);
+                });
+
+                p.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
+                    handleNoteDrag(dragEvent);
+                });
+
+                p.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
+                    handleNoteStopDragging(releaseEvent);
+                });
             }
         } 
     }

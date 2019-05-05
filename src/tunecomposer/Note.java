@@ -134,7 +134,6 @@ public class Note implements Playable {
     public void setSelected(boolean selected) {
         isSelected = selected;
         if (selected) {
-        	//System.out.println("set true");
             noteRect.getStyleClass().clear();
             noteRect.getStyleClass().addAll("selected", 
                                             instrument.toString());
@@ -197,8 +196,7 @@ public class Note implements Playable {
         
         noteRect.setX(x_coord); 
         noteRect.setY(y_coord); 
-        
-        System.out.println(y_coord); 
+      
     }
     
     public void unmove(double XDistance, double YDistance){
@@ -214,7 +212,7 @@ public class Note implements Playable {
         noteRect.setX(x_coord); 
         noteRect.setY(y_coord); 
         
-        System.out.println(y_coord); 
+       
     }
     
     public void stretch(double xDistance){
