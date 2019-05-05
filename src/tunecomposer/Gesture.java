@@ -135,7 +135,6 @@ public class Gesture implements Playable {
         
         for (Playable playable : contents) {
         	playable.setSelected(isSelected);
-                System.out.println("note selected");
         }
     }
     
