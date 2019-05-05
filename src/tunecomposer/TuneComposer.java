@@ -213,7 +213,7 @@ public class TuneComposer extends Application {
         boolean selected = playable.getSelected();
         
         Collection<Playable> currentlySelected = getSelectedPlayables(); 
-        Collection<Playable> selectedPlayable = new ArrayList();
+        Collection<Playable> selectedPlayable = new ArrayList<Playable>();
         
         if (! control && ! selected) {
             selectAll(false);
@@ -354,8 +354,8 @@ public class TuneComposer extends Application {
      */
     private void handleNoteStopDragging(MouseEvent event) {
         clickInPane = false;
-        Collection<Playable> movedPlayables = new ArrayList(); 
-        Collection<Playable> stretchedPlayables = new ArrayList(); 
+        Collection<Playable> movedPlayables = new ArrayList<Playable>(); 
+        Collection<Playable> stretchedPlayables = new ArrayList<Playable>(); 
         allPlayables.forEach((n) -> {
             if (n.getSelected()) {
                 if (changeDuration) {
@@ -549,7 +549,7 @@ public class TuneComposer extends Application {
      */
     @FXML
     void handleDelete(ActionEvent event) {
-        Collection toDelete = new ArrayList();
+        Collection<Playable> toDelete = new ArrayList<Playable>();
         allPlayables.forEach((playable) -> {
             if (playable.getSelected()) {
                 toDelete.add(playable);
@@ -578,7 +578,7 @@ public class TuneComposer extends Application {
         Collection<Playable> currentlySelected = getSelectedPlayables(); 
         selectAll(true);
         
-        Collection toSelect = new ArrayList();
+        Collection<Playable> toSelect = new ArrayList<Playable>();
         allPlayables.forEach((playable)-> {
            toSelect.add(playable); 
         });
@@ -853,7 +853,6 @@ public class TuneComposer extends Application {
             });
           
         }   
-        
         PasteCommand pasteCommand = new PasteCommand(pastedPlayables); 
         commandManager.add(pasteCommand); 
         pasteCommand.execute();
@@ -873,7 +872,7 @@ public class TuneComposer extends Application {
         Alert aboutBox = new Alert(Alert.AlertType.INFORMATION);
         aboutBox.setTitle("About TuneComposer");
         aboutBox.setHeaderText(null);
-        aboutBox.setContentText("Welcome to TuneComposer!\nCreated by Angie,Abbey,Colin & Kimberly\nHave fun composing");
+        aboutBox.setContentText("Welcome to TuneComposer!\n\nClick the canvas to add a note.\nHave fun composing :)\n\nCreated by Angie, Abbey, Colin & Kimberly");
         aboutBox.showAndWait();
     }
  
@@ -1006,7 +1005,7 @@ public class TuneComposer extends Application {
                 noteString = noteString + p.toString() + "\n";
             }
             noteString = "<composition> \n" + noteString + "</composition>"; 
-            filesaver.newFile(noteString,savedFilename);
+            filesaver.saveFile(noteString);
         }
         isSaved = true;
         saveAction.setDisable(true); 
@@ -1027,31 +1026,19 @@ public class TuneComposer extends Application {
      * the file whatever they want, it and the composition to the filesaver
      */
     private void saveAs(){
-        TextInputDialog dialog = new TextInputDialog("filename");
-        dialog.setTitle("Save As");
-        dialog.setHeaderText("Save your composition");
-        dialog.setContentText("Filename (without .txt)");
-
-        // Traditional way to get the response value.
-        Optional<String> result = dialog.showAndWait(); 
-        if (result != null){
-           Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
+        Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
         String noteString = ""; 
 
         for (Playable p : topLevelPlayables) {
             noteString = noteString + p.toString() + "\n";
         }
         noteString = "<composition> \n" + noteString + "</composition>"; 
-        filesaver.newFile(noteString,result.get());
-        savedFilename = result.get(); 
+        filesaver.newFile(noteString,stage);
+        savedFilename = filesaver.getFilename(); 
         isSaved = true; 
-        
+
         saveAction.setDisable(true); 
         saveAsAction.setDisable(true);  
-        }
-       
-        
-        
     }
     
     /**

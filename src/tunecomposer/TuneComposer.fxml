@@ -24,99 +24,51 @@
         <menus>
           <Menu text="File">
             <items>
-              <MenuItem onAction="#handleAboutAction" text="About">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+              <MenuItem onAction="#handleAboutAction" text="About" accelerator="Shortcut+I">
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem fx:id = "newAction" onAction="#handleNewAction" text="New">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+              <MenuItem fx:id = "newAction" onAction="#handleNewAction" text="New" accelerator="Shortcut+N">
                   </MenuItem>
-              <MenuItem fx:id="openAction" onAction="#handleOpenAction" text="Open">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                     </accelerator>
+              <MenuItem fx:id="openAction" onAction="#handleOpenAction" text="Open" accelerator="Shortcut+O" >
                   </MenuItem>
-              <MenuItem fx:id = "saveAction" onAction="#handleSaveAction" text="Save">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+              <MenuItem fx:id = "saveAction" onAction="#handleSaveAction" text="Save" accelerator="Shortcut+S">
                   </MenuItem>
               <MenuItem fx:id="saveAsAction" onAction="#handleSaveAsAction" text="Save as">
                   </MenuItem>  
                   <SeparatorMenuItem mnemonicParsing="false" />   
-              <MenuItem onAction="#handleExitMenuItemAction" text="Exit">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+              <MenuItem onAction="#handleExitMenuItemAction" text="Exit" accelerator="Shortcut+Q">
                   </MenuItem>
             </items>
           </Menu>
             <Menu text="Action">
               <items>
-                <MenuItem fx:id="playAction" onAction="#handleStartPlaying" text="Play">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+                <MenuItem fx:id="playAction" onAction="#handleStartPlaying" text="Play" accelerator="Shortcut+P" >
                   </MenuItem>
-                  <MenuItem fx:id="stopAction" onAction="#handleStopPlaying" text="Stop">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+                  <MenuItem fx:id="stopAction" onAction="#handleStopPlaying" text="Stop" accelerator="Shortcut+T" >
                   </MenuItem>
               </items>
            </Menu>
            <Menu text="Edit">
               <items>
-                  <MenuItem fx:id="selectAllAction" onAction="#handleSelectAll" text="Select All">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+                  <MenuItem fx:id="selectAllAction" onAction="#handleSelectAll" text="Select All" accelerator="Shortcut+A" >
                   </MenuItem>
-                  <MenuItem fx:id="deleteAction" onAction="#handleDelete" text="Delete">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="BACK_SPACE" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+                  <MenuItem fx:id="deleteAction" onAction="#handleDelete" text="Delete" accelerator="backspace" >
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="groupAction" onAction="#handleGroup" text="Group">
-                      <accelerator>
-                          <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                      </accelerator>
+                  <MenuItem fx:id="groupAction" onAction="#handleGroup" text="Group" accelerator="Shortcut+G" >
                   </MenuItem>
-                  <MenuItem fx:id="ungroupAction" onAction="#handleUnGroup" text="Ungroup">
-                      <accelerator>
-                          <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                      </accelerator>
+                  <MenuItem fx:id="ungroupAction" onAction="#handleUnGroup" text="Ungroup" accelerator="Shortcut+U" >
                   </MenuItem>
-                  <MenuItem fx:id="undoAction" onAction="#handleUndo" text="Undo">
-                  	  <accelerator>
-                  	      <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                  	  </accelerator>
+                  <MenuItem fx:id="undoAction" onAction="#handleUndo" text="Undo" accelerator="Shortcut+Z">
                   </MenuItem>
-                  <MenuItem fx:id="redoAction" onAction="#handleRedo" text="Redo">
-                  	  <accelerator>
-                  	      <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                  	  </accelerator>
+                  <MenuItem fx:id="redoAction" onAction="#handleRedo" text="Redo" accelerator="Shortcut+Y" >
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="copyAction" onAction="#handleCopy" text="Copy">
-                  	  <accelerator>
-                  	      <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                          </accelerator>
+                  <MenuItem fx:id="copyAction" onAction="#handleCopy" text="Copy" accelerator="Shortcut+C" >
                   </MenuItem>
-                  <MenuItem fx:id="cutAction" onAction="#handleCut" text="Cut">
-                  	  <accelerator>
-                  	      <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                          </accelerator>
+                  <MenuItem fx:id="cutAction" onAction="#handleCut" text="Cut" accelerator="Shortcut+X" >
                   </MenuItem>
-                  <MenuItem fx:id="pasteAction" onAction="#handlePaste" text="Paste">
-                  	  <accelerator>
-                  	      <KeyCodeCombination alt="UP" code="V" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                          </accelerator>
+                  <MenuItem fx:id="pasteAction" onAction="#handlePaste" text="Paste" accelerator="Shortcut+V" >
                   </MenuItem>
               </items>
             </Menu>

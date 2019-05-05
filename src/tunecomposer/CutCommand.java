@@ -8,7 +8,7 @@ package tunecomposer;
 import java.util.Collection;
 
 /**
- *
+ * Cut is an undoable command that can be undone/redoable
  * @author taylorkm
  */
 public class CutCommand implements Undoable {
