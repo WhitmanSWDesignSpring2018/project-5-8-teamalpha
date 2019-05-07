@@ -138,6 +138,15 @@ public class Gesture implements Playable {
         }
     }
     
+    
+    public void setVolume(int newVolume){
+        for (Playable playable : contents) {
+        	playable.setVolume(newVolume);
+        }
+    }
+    
+    
+    
     /**
      * When the user presses the mouse to start dragging, calculate the offset
      * between the upper-left corner of the Rectangle and where the mouse is

@@ -19,7 +19,7 @@ public class Note implements Playable {
     /**
      * Constants for playing note in MidiPlayer
      */
-    private static final int VOLUME = 127;
+    private int volume = 127;
     private static final int MAX_PITCH = 128;
     //private static final int DEFAULT_DURATION = 100;
     private static final int TRACK = 0;
@@ -113,7 +113,7 @@ public class Note implements Playable {
      * Adds this Note to the MidiPlayer
      */
     public void schedule() {
-        TuneComposer.PLAYER.addNote(pitch, VOLUME, startTime, (int)rectWidth, 
+        TuneComposer.PLAYER.addNote(pitch, volume, startTime, (int)rectWidth, 
                                     instrument.ordinal(), TRACK);
         noteRect.setVisible(true);
     }
@@ -142,6 +142,14 @@ public class Note implements Playable {
             noteRect.getStyleClass().addAll("unselected", 
                                             instrument.toString());
         }
+    }
+    
+    public int getVolume(){
+        return volume; 
+    }
+    
+    public void setVolume(int newVolume){
+        volume = newVolume; 
     }
     
     /**
@@ -284,6 +292,7 @@ public class Note implements Playable {
     public String toString(){
         return "<note x=\"" + Double.toString(x_coord)+ "\" y=\"" + Double.toString(y_coord) 
                 + "\" instrument=\"" + instrument +"\" width=\""+ 
-                Double.toString(rectWidth)+ "\" isSelected=\""+ Boolean.toString(isSelected)+ "\"/> \n";
+                Double.toString(rectWidth)+ "\" isSelected=\""+ Boolean.toString(isSelected)+ "\" volume=\""
+                + Integer.toString(volume)+ "\"/> \n";
     }
 }
