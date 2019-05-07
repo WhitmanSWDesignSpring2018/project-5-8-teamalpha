@@ -16,10 +16,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.input.MouseEvent;
@@ -214,6 +218,7 @@ public class TuneComposer extends Application {
         
         Collection<Playable> currentlySelected = getSelectedPlayables(); 
         Collection<Playable> selectedPlayable = new ArrayList<Playable>();
+       
         
         if (! control && ! selected) {
             selectAll(false);
@@ -284,7 +289,11 @@ public class TuneComposer extends Application {
             note.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
                 handleNoteStopDragging(releaseEvent);
             });
+            note.getRectangle().setOnContextMenuRequested((ContextMenuEvent rightClickEvent)->{
+                handleRightClick(rightClickEvent,note); 
+            });
         }
+        
         clickInPane = true;
         deleteAction.setDisable(false);
         selectAllAction.setDisable(false);
@@ -299,6 +308,39 @@ public class TuneComposer extends Application {
         
         copyAction.setDisable(false); 
         cutAction.setDisable(false); 
+    }
+    
+    
+    public void handleRightClick(ContextMenuEvent rightClick, Playable playable){
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem changeVolumeMenuItem = new MenuItem("Change volume");
+        changeVolumeMenuItem.setOnAction((ActionEvent volumeChangeClick) ->{
+            handleVolumeChange(playable); 
+        }); 
+        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+        MenuItem changeInstrumentMenuItem = new MenuItem("Change instrument"); 
+        contextMenu.getItems().addAll(changeVolumeMenuItem,separatorMenuItem,changeInstrumentMenuItem);
+        contextMenu.show(playable.getRectangle(),rightClick.getScreenX(),rightClick.getScreenY()); 
+    }
+    
+    public void handleVolumeChange(Playable playable){
+        TextInputDialog dialog = new TextInputDialog("0-127");
+        dialog.setTitle("Change Volume");
+        dialog.setHeaderText("");
+        dialog.setContentText("Please enter a number between 0-127:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        
+        
+        if (result.isPresent()){
+            int volume = Integer.parseInt(result.get());
+            playable.setVolume(volume); 
+        }
+        else{
+             
+        }
+        
     }
     
     public Collection<Playable> getSelectedPlayables(){
@@ -640,6 +682,9 @@ public class TuneComposer extends Application {
         
         group.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
+        });
+        group.getRectangle().setOnContextMenuRequested((ContextMenuEvent rightClickEvent)->{
+                handleRightClick(rightClickEvent,group); 
         });
         
         groupAction.setDisable(true);

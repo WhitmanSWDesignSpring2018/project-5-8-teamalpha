@@ -28,6 +28,8 @@ public interface Playable {
     
     void setSelected(boolean selected);
     
+    void setVolume(int newVolume); 
+    
     void setMovingCoords(MouseEvent event);
     
     void moveRect(MouseEvent event);
