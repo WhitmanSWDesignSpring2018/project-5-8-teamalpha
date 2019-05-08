@@ -6,6 +6,7 @@
 package tunecomposer;
 
 import java.util.Collection;
+import java.util.List;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
@@ -28,6 +29,10 @@ public interface Playable {
     
     void setSelected(boolean selected);
     
+    int getStartTime();
+    
+    void setStartTime(int newStartTime);
+    
     void setVolume(int newVolume); 
     
     void setMovingCoords(MouseEvent event);
@@ -46,7 +51,7 @@ public interface Playable {
     
     boolean isGesture(); 
     
-    Collection getContents();
+    Collection<Playable> getContents();
     
     void move(double xDistance, double yDistance); 
     
@@ -54,5 +59,10 @@ public interface Playable {
     
     void stretch(double xDistance); 
     
+    Instrument getInstrument(); 
+    
+    void setInstrument(String newInstrument); 
+    
+    List<Rectangle> getNodeList();
 
 }

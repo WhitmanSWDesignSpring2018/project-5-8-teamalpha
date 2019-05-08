@@ -52,10 +52,10 @@ public class PlayLine {
      * @param endXCoordinate the x coordinate of the final note of 
      *                       the composition
      */
-    public void play(double endXCoordinate) {
+    public void play(double startXCoordinate,double endXCoordinate) {
         timeline.getKeyFrames().clear();
-        movingLine.setEndX(0); // place playLine back at the beginning 
-        movingLine.setStartX(0);
+        movingLine.setEndX(startXCoordinate); // place playLine back at the beginning 
+        movingLine.setStartX(startXCoordinate);
         movingLine.setVisible(true);
         
         timeline = new Timeline();
@@ -67,7 +67,7 @@ public class PlayLine {
                                                endXCoordinate);
         
         // duration calculated for constant speed of 100 pixels per second
-        Duration duration = Duration.millis(endXCoordinate*10); 
+        Duration duration = Duration.millis((endXCoordinate-startXCoordinate)*10); 
         
         // when finsihed, playLine will disappear
         EventHandler onFinished = (EventHandler<ActionEvent>) (ActionEvent t) -> 

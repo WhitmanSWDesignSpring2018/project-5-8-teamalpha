@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
@@ -109,6 +110,13 @@ public class TuneComposer extends Application {
      */
     @FXML
      AnchorPane playLinePane;
+    
+    /**
+    * The pane in which the note names are constructed
+    */
+    
+    @FXML
+    AnchorPane noteNamesPane; 
     
     
     public MouseEvent dragStart; 
@@ -290,8 +298,9 @@ public class TuneComposer extends Application {
                 handleNoteStopDragging(releaseEvent);
             });
             note.getRectangle().setOnContextMenuRequested((ContextMenuEvent rightClickEvent)->{
-                handleRightClick(rightClickEvent,note); 
+                handleRightClick(rightClickEvent, note); 
             });
+            
         }
         
         clickInPane = true;
@@ -312,18 +321,36 @@ public class TuneComposer extends Application {
     
     
     public void handleRightClick(ContextMenuEvent rightClick, Playable playable){
+        Collection<Playable> selectedPlayables= getSelectedPlayables(); 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem changeVolumeMenuItem = new MenuItem("Change volume");
         changeVolumeMenuItem.setOnAction((ActionEvent volumeChangeClick) ->{
-            handleVolumeChange(playable); 
+            handleVolumeChange(selectedPlayables); 
         }); 
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
         MenuItem changeInstrumentMenuItem = new MenuItem("Change instrument"); 
-        contextMenu.getItems().addAll(changeVolumeMenuItem,separatorMenuItem,changeInstrumentMenuItem);
+        changeInstrumentMenuItem.setOnAction((ActionEvent instrumentChangeClick) ->{
+            handleInstrumentChange(selectedPlayables, playable); 
+        }); 
+        SeparatorMenuItem separatorMenuItem2 = new SeparatorMenuItem();
+        MenuItem deleteRightClickMenuItem = new MenuItem("Delete"); 
+        deleteRightClickMenuItem.setOnAction((ActionEvent deleteRightClick) ->{
+            handleDelete(deleteRightClick); 
+        }); 
+        
+        MenuItem playSelectedMenuItem = new MenuItem("Play selected"); 
+        playSelectedMenuItem.setOnAction((ActionEvent playSelectedClick) ->{
+            playSelected(); 
+        }); 
+        
+        
+        contextMenu.getItems().addAll(changeVolumeMenuItem,separatorMenuItem,changeInstrumentMenuItem, 
+                                      separatorMenuItem2,deleteRightClickMenuItem,playSelectedMenuItem);
+        
         contextMenu.show(playable.getRectangle(),rightClick.getScreenX(),rightClick.getScreenY()); 
     }
     
-    public void handleVolumeChange(Playable playable){
+    public void handleVolumeChange(Collection<Playable> playables){
         TextInputDialog dialog = new TextInputDialog("0-127");
         dialog.setTitle("Change Volume");
         dialog.setHeaderText("");
@@ -335,12 +362,88 @@ public class TuneComposer extends Application {
         
         if (result.isPresent()){
             int volume = Integer.parseInt(result.get());
-            playable.setVolume(volume); 
+            for (Playable p : playables){
+                p.setVolume(volume); 
+            }
         }
-        else{
-             
+    }
+    
+    public void handleInstrumentChange(Collection<Playable> playables, Playable playable){
+        List<String> choices = new ArrayList<>();
+        choices.add("piano"); 
+        choices.add("harpsichord");
+        choices.add("marimba");
+        choices.add("church-organ"); 
+        choices.add("accordion");
+        choices.add("guitar");
+        choices.add("violin"); 
+        choices.add("french-horn");
+            
+        Instrument instrument = playable.getInstrument(); 
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(instrument.toString(), choices);
+        dialog.setTitle("Change Instrument");
+        //dialog.setHeaderText("Look, a Choice Dialog");
+        dialog.setContentText("Choose an instrument:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        
+        if (result.isPresent()){
+            String newInstrument = result.get();
+            for (Playable p : playables){
+                p.setInstrument(newInstrument); 
+            }
+        }
+    }
+    
+    public void playSelected(){
+        Collection<Playable> selectedNotes = new ArrayList<Playable>(); 
+        for (Playable p : allPlayables) {
+            if (!p.isGesture() && p.getSelected()) {
+                selectedNotes.add(p);
+            }
         }
         
+        PLAYER.stop();
+        PLAYER.clear();
+        for(int i=0; i<8; i++){
+            PLAYER.addMidiEvent(ShortMessage.PROGRAM_CHANGE + i, timbreList[i], 0, 0, 0);
+        }
+        
+        double minX = 2000; 
+        double maxX = 0;
+        for (Playable p: selectedNotes){
+            if (p.getRectangle().getX() < minX){
+                minX = p.getRectangle().getX(); 
+            }
+            if (p.getRectangle().getX() > maxX) {
+                maxX = p.getRectangle().getX() + p.getWidth();
+            }
+        }
+        
+        // set the start times relative to the beginnning of the selected playables
+        // for midiPlayer scheduling
+        for (Playable p : selectedNotes) {
+            int diff = p.getStartTime() - (int)minX;
+            p.setStartTime(diff);
+        }
+        
+        selectedNotes.forEach((playable) -> {
+            playable.schedule();
+            playable.updateLastNote();
+        });
+
+        PLAYER.play();
+        playLine.play(minX,maxX);
+        
+        stopAction.setDisable(false); 
+        playAction.setDisable(true);
+        
+        // reset the start times
+        for (Playable p : selectedNotes) {
+            int diff = p.getStartTime();
+            p.setStartTime(diff + (int)minX);
+        }
     }
     
     public Collection<Playable> getSelectedPlayables(){
@@ -516,7 +619,7 @@ public class TuneComposer extends Application {
         });
 
         PLAYER.play();
-        playLine.play(Note.lastNote);
+        playLine.play(0,Note.lastNote);
         
         stopAction.setDisable(false); 
         playAction.setDisable(true); 
@@ -959,6 +1062,25 @@ public class TuneComposer extends Application {
             playAction.setDisable(true);   
         }
     }
+    private void addHandlers(Playable node){
+        if(node.isGesture()){
+            for(Playable x : node.getContents()){
+                addHandlers(x);
+            }
+        }
+        node.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
+            handleNoteClick(pressedEvent,node);
+            handleNotePress(pressedEvent,node);
+        });
+
+        node.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
+            handleNoteDrag(dragEvent);
+        });
+
+        node.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
+            handleNoteStopDragging(releaseEvent);
+        });
+    }
     
     /**
      * Opens a saved composition file. If the current composition is not saved,
@@ -1005,25 +1127,16 @@ public class TuneComposer extends Application {
             notePane.getChildren().clear();
             playAction.setDisable(false); 
             Collection<Playable> loadedPlayables = xmlparser.loadFile(selectedFile); 
+            allPlayables.addAll(loadedPlayables);
             for (Playable p : loadedPlayables){
-                notePane.getChildren().add(p.getRectangle()); 
-                allPlayables.add(p); 
-                p.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
-                handleNoteClick(pressedEvent,p);
-                handleNotePress(pressedEvent,p);
-                });
-
-                p.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
-                    handleNoteDrag(dragEvent);
-                });
-
-                p.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
-                    handleNoteStopDragging(releaseEvent);
-                });
+                if(p.isGesture()){
+                    allPlayables.addAll(p.getContents());
+                }
+                notePane.getChildren().addAll(p.getNodeList()); 
+                addHandlers(p);
             }
         } 
     }
-    
     /**
      * Handles the save MenuItem action.
      * @param event, the save MenuItem event
@@ -1093,6 +1206,7 @@ public class TuneComposer extends Application {
      */
     public void initialize() {
          playLinePane.setMouseTransparent(true);
+         noteNamesPane.setMouseTransparent(true); 
          playLine = new PlayLine(movingLine);
          
         // Add gray lines to background
@@ -1100,6 +1214,12 @@ public class TuneComposer extends Application {
             Line row = new Line(0, 10 * i, 2000, 10 * i);
             row.getStyleClass().add("row-divider");
             background.getChildren().add(row);
+            NoteName noteName = new NoteName(0,i*10); 
+            NoteName midNoteName = new NoteName(1000,i*10); 
+            NoteName endNoteName = new NoteName(2000,i*10); 
+            noteNamesPane.getChildren().add(noteName.getName()); 
+            noteNamesPane.getChildren().add(midNoteName.getName()); 
+            noteNamesPane.getChildren().add(endNoteName.getName()); 
         }
         selection = new SelectionArea(selectRect);
         deleteAction.setDisable(true);
