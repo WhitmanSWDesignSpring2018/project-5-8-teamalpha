@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
@@ -38,6 +39,7 @@ public class Gesture implements Playable {
     private double widthOffset;
     
     private boolean isSelected;
+    private int startTime;
     
     /**
      * a set of everything contained in the gesture
@@ -73,6 +75,7 @@ public class Gesture implements Playable {
         gestureRect.setMouseTransparent(false);
         
         isSelected = true;
+        startTime = (int)x_coord;
     }
     
     /**
@@ -109,6 +112,19 @@ public class Gesture implements Playable {
             playable.schedule();
             playable.updateLastNote();
         });
+    }
+    
+    public int getStartTime() {
+        return startTime;
+    }
+    
+    public void setStartTime(int newStartTime) {
+//        for (Playable p : contents) {
+//            int diff = p.getStartTime() - startTime;
+//            p.setStartTime(newStartTime + diff);
+//            //System.out.println(p.getStartTime());
+//        }
+        startTime = newStartTime;
     }
     
     /**
@@ -208,7 +224,7 @@ public class Gesture implements Playable {
     /**
      * Gets the collection of the contents.
      */
-    public Collection getContents() {return contents;}
+    public Collection<Playable> getContents() {return contents;}
     
     /**
      * Returns true. This allows us to call isGesture() on any Playable to 
@@ -253,5 +269,25 @@ public class Gesture implements Playable {
         }
         return ("<gesture isSelected=\"" + Boolean.toString(isSelected) + "\"> \n"+ playableString + "</gesture> \n"); 
     }
-
+    
+    public Instrument getInstrument(){
+        return Instrument.PIANO; 
+    }
+    
+    public void setInstrument(String newInstrument){
+        for (Playable p:contents){
+            p.setInstrument(newInstrument);
+        }
+    }
+    
+    @Override
+    public List<Rectangle> getNodeList(){
+        List<Rectangle> gestureList = new ArrayList<>();
+        contents.forEach((element)->{
+            gestureList.addAll(element.getNodeList());
+        });
+        gestureList.add(gestureRect);
+        return gestureList;
+    }
+    
 }

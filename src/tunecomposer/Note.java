@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 package tunecomposer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -44,7 +46,7 @@ public class Note implements Playable {
     private double rectWidth;
     private int startTime;
     private int pitch;
-    private final Instrument instrument;
+    private Instrument instrument;
     
     /**
      * Offsets for dragging Rectangle
@@ -116,6 +118,14 @@ public class Note implements Playable {
         TuneComposer.PLAYER.addNote(pitch, volume, startTime, (int)rectWidth, 
                                     instrument.ordinal(), TRACK);
         noteRect.setVisible(true);
+    }
+    
+    public int getStartTime() {
+        return startTime;
+    }
+    
+    public void setStartTime(int newStartTime) {
+        startTime = newStartTime;
     }
     
     /**
@@ -286,7 +296,7 @@ public class Note implements Playable {
      * retrieve the contents of a Gesture but call it on any Playable.
      * @return an empty HashSet
      */
-    public Collection getContents() {return new HashSet();}
+    public Collection<Playable> getContents() {return new HashSet();}
     
     
     public String toString(){
@@ -294,5 +304,23 @@ public class Note implements Playable {
                 + "\" instrument=\"" + instrument +"\" width=\""+ 
                 Double.toString(rectWidth)+ "\" isSelected=\""+ Boolean.toString(isSelected)+ "\" volume=\""
                 + Integer.toString(volume)+ "\"/> \n";
+    }
+    
+    
+    public Instrument getInstrument(){
+        return instrument; 
+    }
+    
+    public void setInstrument(String newInstrument){
+        noteRect.getStyleClass().remove(instrument.toString());
+        instrument = instrument.toInstrument(newInstrument); 
+        noteRect.getStyleClass().add(instrument.toString());
+    }
+    
+    @Override
+    public List<Rectangle> getNodeList(){
+        List<Rectangle> rectList = new ArrayList<Rectangle>();
+        rectList.add(this.getRectangle());
+        return rectList;
     }
 }

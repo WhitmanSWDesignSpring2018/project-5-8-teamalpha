@@ -81,3 +81,7 @@
     -fx-background-color: gold;
     -fx-fill: gold;
 }
+
+.note-text{
+    -fx-fill: gray; 
+}

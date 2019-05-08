@@ -48,27 +48,15 @@ public class XMLParser {
         try{
             DocumentBuilder builder = factory.newDocumentBuilder(); 
             Document document = builder.parse(filename);  //get file name here
-            NodeList noteList = document.getElementsByTagName("note");
-            NodeList gestureList = document.getElementsByTagName("gesture");
+            document.getDocumentElement().normalize();
             
-            for (int i = 0; i<noteList.getLength(); i++) {
-                Node n = noteList.item(i);
-                if (n.getNodeType() == Node.ELEMENT_NODE){
-                Element note = (Element) n; 
-                Playable newNote = parseNote(note);
-                playablesToLoad.add(newNote); 
-                }
-            }
-            for (int j = 0; j<gestureList.getLength(); j++){
-                Node g = gestureList.item(j);
-                Element gesture = (Element) g; 
-                Playable newGesture = parseGesture(gesture); 
-                playablesToLoad.add(newGesture); 
-            }
+            NodeList mainList = document.getDocumentElement().getChildNodes();
+            playablesToLoad = nodesToComposition(mainList);
+            return playablesToLoad;
         } catch (ParserConfigurationException e){
         System.out.println("exception");
         }
-        return playablesToLoad; 
+        return null;
     }
     
     public Collection<Playable> loadFile(String XMLString) throws org.xml.sax.SAXException, IOException{
@@ -77,29 +65,16 @@ public class XMLParser {
         try{
             DocumentBuilder builder = factory.newDocumentBuilder(); 
             Document document = builder.parse(new InputSource(new StringReader(XMLString))); 
-            NodeList noteList = document.getElementsByTagName("note");
-            NodeList gestureList = document.getElementsByTagName("gesture");
-
-            for (int i = 0; i<noteList.getLength(); i++) {
-                Node n = noteList.item(i);
-                if (n.getNodeType() == Node.ELEMENT_NODE){
-                Element note = (Element) n; 
-                Playable newNote = parseNote(note);
-                playablesToLoad.add(newNote); 
-                }
-            }
-            for (int j = 0; j<gestureList.getLength(); j++){
-                Node g = gestureList.item(j);
-                Element gesture = (Element) g; 
-                Playable newGesture = parseGesture(gesture); 
-                playablesToLoad.add(newGesture); 
+            document.getDocumentElement().normalize();
             
-            }
+            NodeList mainList = document.getDocumentElement().getChildNodes();
+            playablesToLoad = nodesToComposition(mainList);
+            return playablesToLoad;
            
         } catch (ParserConfigurationException e){
        
         }
-        return playablesToLoad; 
+        return null; 
 }
     
     
@@ -113,7 +88,7 @@ public class XMLParser {
     public Playable parseGesture(Element gesture){
         Boolean isSelected = Boolean.parseBoolean(gesture.getAttribute("isSelected")); 
         NodeList gestureChildrenList = gesture.getChildNodes();
-        Collection<Playable> contents = nodesToPlayables(gestureChildrenList); 
+        Collection<Playable> contents = nodesToComposition(gestureChildrenList); 
         Gesture newGesture = new Gesture(contents);
         newGesture.setSelected(isSelected); 
         return newGesture; 
@@ -143,7 +118,7 @@ public class XMLParser {
      * @param playableNodes, the NodeList to parse
      * @return the Collection of playables that was created
      */
-    public Collection<Playable> nodesToPlayables(NodeList playableNodes){
+    public Collection<Playable> nodesToComposition(NodeList playableNodes){
         Collection<Playable> allPlayables = new ArrayList<Playable>(); 
         for (int j = 0; j<playableNodes.getLength(); j++){
             Node p = playableNodes.item(j);
