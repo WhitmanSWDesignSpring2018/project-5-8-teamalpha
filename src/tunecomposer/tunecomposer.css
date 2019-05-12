@@ -43,45 +43,53 @@
 }
 
 .piano {
-    -fx-background-color: lightgray;
-    -fx-fill: lightgray;
+    -fx-background-color: tomato;
+    -fx-fill: tomato;
 }
 
 .harpsichord {
-    -fx-background-color: beige;
-    -fx-fill: beige;
-}
-
-.marimba {
-    -fx-background-color: lightsalmon;
-    -fx-fill: lightsalmon;
-}
-
-.church-organ {
-    -fx-background-color: lightblue;
-    -fx-fill: lightblue;
-}
-
-.accordion {
     -fx-background-color: orange;
     -fx-fill: orange;
 }
 
+.marimba {
+    -fx-background-color: yellow;
+    -fx-fill: yellow;
+}
+
+.church-organ {
+    -fx-background-color: green;
+    -fx-fill: green;
+}
+
+.accordion {
+    -fx-background-color: aqua;
+    -fx-fill: aqua;
+}
+
 .guitar {
-    -fx-background-color: lightgreen;
-    -fx-fill: lightgreen;
+    -fx-background-color: teal;
+    -fx-fill: teal;
 }
 
 .violin {
-    -fx-background-color: rosybrown;
-    -fx-fill: rosybrown;
+    -fx-background-color: darkorchid;
+    -fx-fill: darkorchid;
 }
 
 .french-horn {
-    -fx-background-color: gold;
-    -fx-fill: gold;
+    -fx-background-color: fuchsia;
+    -fx-fill: fuchsia;
+}
+
+
+
+.no-volume {
+    -fx-background-color: white;
+    -fx-fill: white;
 }
 
 .note-text{
     -fx-fill: gray; 
 }
+

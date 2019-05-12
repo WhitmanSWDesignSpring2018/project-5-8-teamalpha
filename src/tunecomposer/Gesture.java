@@ -154,12 +154,17 @@ public class Gesture implements Playable {
         }
     }
     
+    public int getVolume(){
+        return 127; 
+    }
+    
     
     public void setVolume(int newVolume){
         for (Playable playable : contents) {
         	playable.setVolume(newVolume);
         }
     }
+    
     
     
     

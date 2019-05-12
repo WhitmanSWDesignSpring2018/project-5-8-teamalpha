@@ -33,6 +33,8 @@ public interface Playable {
     
     void setStartTime(int newStartTime);
     
+    int getVolume(); 
+    
     void setVolume(int newVolume); 
     
     void setMovingCoords(MouseEvent event);
