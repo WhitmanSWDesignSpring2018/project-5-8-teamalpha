@@ -24,7 +24,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.input.MouseEvent;
@@ -36,7 +35,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.sound.midi.ShortMessage;
 import org.xml.sax.SAXException;
-
 
 //website where we got information about different types of dialog boxes 
 //https://code.makery.ch/blog/javafx-dialogs-official/
@@ -112,27 +110,36 @@ public class TuneComposer extends Application {
      AnchorPane playLinePane;
     
     /**
-    * The pane in which the note names are constructed
+    * The pane in which the note names are constructed.
     */
-    
     @FXML
     AnchorPane noteNamesPane; 
     
-    
+    /**
+     * MouseEvent used to calculate move distances.
+     */
     public MouseEvent dragStart; 
     
-    public Collection<Playable> saveSelected = new ArrayList<Playable>(); 
-    
-    public ClipboardWrapper clipboardWrapper = new ClipboardWrapper();
-    
-    FileSaver filesaver = new FileSaver();  
-    
-    XMLParser xmlparser = new XMLParser(); 
+    /**
+     * Collection of playables used for undoing selection events.
+     */
+    public Collection<Playable> saveSelected = new ArrayList<>(); 
     
     /**
-     * Plays notes that have been added.
-     * Called when the Play button is clicked.
+     * The object used for copy, cut, and paste.
      */
+    public ClipboardWrapper clipboardWrapper = new ClipboardWrapper();
+    
+    /**
+     * The object that facilitates saving files.
+     */
+    public FileSaver filesaver = new FileSaver();  
+    
+    /**
+     * Parses saved xml files into compositions.
+     */
+    public XMLParser xmlparser = new XMLParser(); 
+    
     //buttons
     @FXML
     private MenuItem deleteAction;
@@ -158,7 +165,6 @@ public class TuneComposer extends Application {
     private MenuItem saveAction; 
     @FXML
     private MenuItem newAction; 
-    
     @FXML
     private MenuItem pasteAction; 
     @FXML
@@ -226,7 +232,6 @@ public class TuneComposer extends Application {
         
         Collection<Playable> currentlySelected = getSelectedPlayables(); 
         Collection<Playable> selectedPlayable = new ArrayList<Playable>();
-       
         
         if (! control && ! selected) {
             selectAll(false);
@@ -249,7 +254,6 @@ public class TuneComposer extends Application {
         isSaved = false;
         saveAction.setDisable(false); 
         saveAsAction.setDisable(false);
-        
     }
     
     /**
@@ -300,7 +304,6 @@ public class TuneComposer extends Application {
             note.getRectangle().setOnContextMenuRequested((ContextMenuEvent rightClickEvent)->{
                 handleRightClick(rightClickEvent, note); 
             });
-            
         }
         
         clickInPane = true;
@@ -319,19 +322,27 @@ public class TuneComposer extends Application {
         cutAction.setDisable(false); 
     }
     
-    
+    /**
+     * Creates the context menu on right click. Called on context menu requested 
+     * for a given note or gesture.
+     * @param rightClick, the ContextMenuEvent
+     * @param playable, the owner of the rectangle which triggered the ContextMenuEvent
+     */
     public void handleRightClick(ContextMenuEvent rightClick, Playable playable){
         Collection<Playable> selectedPlayables= getSelectedPlayables(); 
         ContextMenu contextMenu = new ContextMenu();
+
         MenuItem changeVolumeMenuItem = new MenuItem("Change volume");
         changeVolumeMenuItem.setOnAction((ActionEvent volumeChangeClick) ->{
             handleVolumeChange(selectedPlayables); 
         }); 
+        
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
         MenuItem changeInstrumentMenuItem = new MenuItem("Change instrument"); 
         changeInstrumentMenuItem.setOnAction((ActionEvent instrumentChangeClick) ->{
             handleInstrumentChange(selectedPlayables, playable); 
         }); 
+        
         SeparatorMenuItem separatorMenuItem2 = new SeparatorMenuItem();
         MenuItem deleteRightClickMenuItem = new MenuItem("Delete"); 
         deleteRightClickMenuItem.setOnAction((ActionEvent deleteRightClick) ->{
@@ -343,31 +354,47 @@ public class TuneComposer extends Application {
             playSelected(); 
         }); 
         
-        
         contextMenu.getItems().addAll(changeVolumeMenuItem,separatorMenuItem,changeInstrumentMenuItem, 
                                       separatorMenuItem2,deleteRightClickMenuItem,playSelectedMenuItem);
         
         contextMenu.show(playable.getRectangle(),rightClick.getScreenX(),rightClick.getScreenY()); 
     }
     
+    /**
+     * Handles changing the volume of the selected playables. Called by context 
+     * menu action.
+     * @param playables, the set of selected playables
+     */
     public void handleVolumeChange(Collection<Playable> playables){
-        TextInputDialog dialog = new TextInputDialog("0-127");
+        String dialogVolume = "0-127"; 
+        //if isolated note selected the volume of that note will appear in dialog box
+        if (playables.size() == 1){ 
+            dialogVolume = Integer.toString(playables.iterator().next().getVolume()); 
+        }
+        TextInputDialog dialog = new TextInputDialog(dialogVolume);
         dialog.setTitle("Change Volume");
         dialog.setHeaderText("");
         dialog.setContentText("Please enter a number between 0-127:");
 
-        // Traditional way to get the response value.
         Optional<String> result = dialog.showAndWait();
-        
-        
+     
         if (result.isPresent()){
             int volume = Integer.parseInt(result.get());
             for (Playable p : playables){
                 p.setVolume(volume); 
-            }
+                if (! p.isGesture()){
+                    p.getRectangle().setOpacity((double)volume/127); 
+                }
+            }  
         }
     }
     
+    /**
+     * Handles changing the instrument of the given playables. Creates a dialog that
+     * allows you to choose the new instrument from a drop-down menu
+     * @param playables, the list of selected playables
+     * @param playable, the playable that triggered the context menu event
+     */
     public void handleInstrumentChange(Collection<Playable> playables, Playable playable){
         List<String> choices = new ArrayList<>();
         choices.add("piano"); 
@@ -396,6 +423,9 @@ public class TuneComposer extends Application {
         }
     }
     
+    /**
+     * Allows the user to play only the selectedPlayables.
+     */
     public void playSelected(){
         Collection<Playable> selectedNotes = new ArrayList<Playable>(); 
         for (Playable p : allPlayables) {
@@ -437,7 +467,6 @@ public class TuneComposer extends Application {
         playLine.play(minX,maxX);
         
         stopAction.setDisable(false); 
-        playAction.setDisable(true);
         
         // reset the start times
         for (Playable p : selectedNotes) {
@@ -446,6 +475,10 @@ public class TuneComposer extends Application {
         }
     }
     
+    /**
+     * Method to get only the currently selected Playables. 
+     * @return, the created collection containing all selected playables. 
+     */
     public Collection<Playable> getSelectedPlayables(){
         HashSet<Playable> selectedPlayables = new HashSet<Playable>();
     	allPlayables.forEach((n) -> {
@@ -622,7 +655,6 @@ public class TuneComposer extends Application {
         playLine.play(0,Note.lastNote);
         
         stopAction.setDisable(false); 
-        playAction.setDisable(true); 
     }
 
     /**
@@ -644,7 +676,6 @@ public class TuneComposer extends Application {
         playLine.stop();
         
         stopAction.setDisable(true); 
-        playAction.setDisable(false); 
     }
 
     /**
