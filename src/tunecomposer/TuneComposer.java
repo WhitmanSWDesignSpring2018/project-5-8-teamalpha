@@ -264,6 +264,8 @@ public class TuneComposer extends Application {
     private void handleClick(MouseEvent event) {
         Collection<Playable> selectedPlayables = getSelectedPlayables(); 
         
+        Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
+        
         if (playLine.isPlaying()) {
             stopPlaying();
         }
@@ -310,8 +312,10 @@ public class TuneComposer extends Application {
         deleteAction.setDisable(false);
         selectAllAction.setDisable(false);
         
-        if(selectedPlayables.size() > 1){
-            groupAction.setDisable(false);
+        groupAction.setDisable(false); 
+        
+        if(topLevelPlayables.size() <= 1){
+            groupAction.setDisable(true);
         }
         saveSelected = getSelectedPlayables();
         isSaved = false;
@@ -330,6 +334,15 @@ public class TuneComposer extends Application {
      */
     public void handleRightClick(ContextMenuEvent rightClick, Playable playable){
         Collection<Playable> selectedPlayables= getSelectedPlayables(); 
+        Collection<Playable> topLevelPlayables = getTopLevelPlayables(); 
+        
+        boolean gesturePresent = false; 
+        for (Playable p: selectedPlayables){
+            if (p.isGesture()){
+                gesturePresent = true; 
+            }
+        }
+        
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem changeVolumeMenuItem = new MenuItem("Change volume");
@@ -354,8 +367,31 @@ public class TuneComposer extends Application {
             playSelected(); 
         }); 
         
-        contextMenu.getItems().addAll(changeVolumeMenuItem,separatorMenuItem,changeInstrumentMenuItem, 
-                                      separatorMenuItem2,deleteRightClickMenuItem,playSelectedMenuItem);
+        SeparatorMenuItem separatorMenuItem3 = new SeparatorMenuItem();
+        
+        MenuItem groupSelectedMenuItem = new MenuItem("Group"); 
+        groupSelectedMenuItem.setOnAction((ActionEvent groupSelectedClick) ->{
+            makeGroup(); 
+        });
+        
+        MenuItem ungroupSelectedMenuItem = new MenuItem("Ungroup"); 
+        ungroupSelectedMenuItem.setOnAction((ActionEvent ungroupSelectedClick) ->{
+            unGroup(); 
+        });
+        
+        ungroupSelectedMenuItem.setDisable(!gesturePresent); 
+      
+        if (selectedPlayables.size() <= 1 ) {
+            groupSelectedMenuItem.setDisable(true); 
+        }
+
+        if(topLevelPlayables.size() <= 1){
+            groupSelectedMenuItem.setDisable(true);
+        }
+        
+        
+        contextMenu.getItems().addAll(playSelectedMenuItem,separatorMenuItem,changeVolumeMenuItem,changeInstrumentMenuItem, 
+                                      separatorMenuItem2,groupSelectedMenuItem, ungroupSelectedMenuItem,separatorMenuItem3, deleteRightClickMenuItem);
         
         contextMenu.show(playable.getRectangle(),rightClick.getScreenX(),rightClick.getScreenY()); 
     }
@@ -707,9 +743,11 @@ public class TuneComposer extends Application {
         if (result.get() == buttonTypeYes){
             if (savedFilename.equals("new")){
                 saveAs(); 
+                System.exit(0); 
             }
             else{ //file has not been saved before
                 save(); 
+                System.exit(0); 
             }
         } else if (result.get() == buttonTypeNo) {
             System.exit(0); 
@@ -725,24 +763,25 @@ public class TuneComposer extends Application {
      */
     @FXML
     void handleDelete(ActionEvent event) {
-        Collection<Playable> toDelete = new ArrayList<Playable>();
-        allPlayables.forEach((playable) -> {
-            if (playable.getSelected()) {
-                toDelete.add(playable);
-            }
-        });
+        Collection<Playable> toDelete = getSelectedPlayables(); 
         DeleteCommand deletecommand = new DeleteCommand(toDelete);
         deletecommand.execute();
         TuneComposer.commandManager.add(deletecommand);
         undoAction.setDisable(false); 
         redoAction.setDisable(true); 
-        if(allPlayables.isEmpty()){
-            deleteAction.setDisable(true);
-            selectAllAction.setDisable(true);
-        }
+        
+        
+        deleteAction.setDisable(true);
+        
         isSaved = false; 
         saveAction.setDisable(false); 
         saveAsAction.setDisable(false);
+        
+        groupAction.setDisable(true); 
+        ungroupAction.setDisable(true); 
+        
+        cutAction.setDisable(true); 
+        copyAction.setDisable(true); 
     }
     
     /**
@@ -767,6 +806,10 @@ public class TuneComposer extends Application {
         undoAction.setDisable(false);
         redoAction.setDisable(true); 
         
+        deleteAction.setDisable(false); 
+        
+        selectAllAction.setDisable(true); 
+        
         saveSelected = getSelectedPlayables();
         isSaved = false; 
         saveAction.setDisable(false); 
@@ -788,12 +831,8 @@ public class TuneComposer extends Application {
      * the NotePane and sets the event handlers.
      */
     public void makeGroup() {
-        HashSet<Playable> selectedPlayables = new HashSet<Playable>();
-    	allPlayables.forEach((n) -> {
-            if (n.getSelected()) {
-                selectedPlayables.add(n);
-            }
-        });
+        Collection<Playable> selectedPlayables = getSelectedPlayables();
+    	
    
         Gesture group = new Gesture(selectedPlayables);
         selectedPlayables.add(group); 
@@ -1087,12 +1126,26 @@ public class TuneComposer extends Application {
             } else {
                 return; 
             }
-            
-            allPlayables.clear();
-            notePane.getChildren().clear();
-            playAction.setDisable(true);   
         }
+        allPlayables.clear();
+        notePane.getChildren().clear();
+        playAction.setDisable(true); 
+        
+        undoAction.setDisable(true); 
+        redoAction.setDisable(true); 
+        cutAction.setDisable(true); 
+        copyAction.setDisable(true); 
+        
+        groupAction.setDisable(true); 
+        deleteAction.setDisable(true); 
+        selectAllAction.setDisable(true); 
     }
+    
+    
+    /**
+     * Add handlers for pressing, dragging, and releasing the mouse for the given node.
+     * @param node 
+     */
     private void addHandlers(Playable node){
         if(node.isGesture()){
             for(Playable x : node.getContents()){
@@ -1242,15 +1295,13 @@ public class TuneComposer extends Application {
          
         // Add gray lines to background
         for (int i = 1; i < 128; i++) {
-            Line row = new Line(0, 10 * i, 2000, 10 * i);
+            Line row = new Line(0, 10 * i, 10000, 10 * i);
             row.getStyleClass().add("row-divider");
             background.getChildren().add(row);
-            NoteName noteName = new NoteName(0,i*10); 
-            NoteName midNoteName = new NoteName(1000,i*10); 
-            NoteName endNoteName = new NoteName(2000,i*10); 
-            noteNamesPane.getChildren().add(noteName.getName()); 
-            noteNamesPane.getChildren().add(midNoteName.getName()); 
-            noteNamesPane.getChildren().add(endNoteName.getName()); 
+            for (int j = 0; j <= 10000; j = j+1000 ){
+                NoteName noteName = new NoteName(j,i*10); 
+                noteNamesPane.getChildren().add(noteName.getName()); 
+            }
         }
         selection = new SelectionArea(selectRect);
         deleteAction.setDisable(true);
