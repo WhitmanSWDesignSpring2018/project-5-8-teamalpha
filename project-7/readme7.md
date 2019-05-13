@@ -26,9 +26,6 @@ The ratio of points to person hours is 13/40 = .3 story points per hour.
 We spent so much time on this project because we really struggled with the previous one and really wanted to make sure we were able to complete this project. We ended up meeting in groups of 2 or 3 everyday of the week. Spending time every single day on the project worked well as we were able to get much more of this project completed in time compared to the last one. 
 
 
-We weren't sure if you should be abel to save blank compositions or not but decided that you should since you are able to save blank documents in Word. 
+We weren't sure if you should be able to save blank compositions or not but decided that you should since you are able to save blank documents in Word. 
 
 
-Notes for future projects:
-Project 8:
-Warn the user if they will override a file
