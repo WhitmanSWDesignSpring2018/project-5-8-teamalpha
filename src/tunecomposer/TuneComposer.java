@@ -872,12 +872,26 @@ public class TuneComposer extends Application {
      * gestures remain.
      */
     public void unGroup() {
-    	ArrayList<Playable> topLevelGestures = getTopLevelGestures();
-    	for (Playable g : topLevelGestures) {
+    	ArrayList<Playable> selectedTopLevelGestures = getTopLevelGestures();
+    	for (Playable g : selectedTopLevelGestures) {
     		notePane.getChildren().remove(g.getRectangle());
     		allPlayables.remove(g);
     	}
-        topLevelGestures = getTopLevelGestures(); 
+        Collection<Playable> topLevelGestures = new ArrayList<>();
+        Boolean isIn;
+        for (Playable g : allPlayables) {
+            isIn = false;
+            for (Playable h : allPlayables) {
+                if (h.getContents().contains(g)) {
+                    isIn = true;
+                }
+            }
+            if (!isIn) {
+                topLevelGestures.add(g);
+            }
+    	}
+        
+        ungroupAction.setDisable(false); 
         if(topLevelGestures.size() == 0){
             ungroupAction.setDisable(true);
         }
