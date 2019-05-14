@@ -284,14 +284,14 @@ public class TuneComposer extends Application {
                 selectAll(false);
             }
             Instrument instrument = getInstrument();
-            Note note = new Note(event.getX(), event.getY(), instrument, 100);
+            Note note = new Note(event.getX(), event.getY(), instrument, 100, 127);
             AddNoteCommand noteaction = new AddNoteCommand(note,selectedPlayables);
             commandManager.add(noteaction);
             undoAction.setDisable(false);
             redoAction.setDisable(true); 
             
             noteaction.execute();
-            notePane.getChildren().add(note.getRectangle());
+            notePane.getChildren().add(note.getRectangles());
             
             note.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
                 handleNoteClick(pressedEvent, note);
@@ -407,6 +407,7 @@ public class TuneComposer extends Application {
         if (playables.size() == 1){ 
             dialogVolume = Integer.toString(playables.iterator().next().getVolume()); 
         }
+        
         TextInputDialog dialog = new TextInputDialog(dialogVolume);
         dialog.setTitle("Change Volume");
         dialog.setHeaderText("");
@@ -419,7 +420,7 @@ public class TuneComposer extends Application {
             for (Playable p : playables){
                 p.setVolume(volume); 
                 if (! p.isGesture()){
-                    p.getRectangle().setOpacity((double)volume/127); 
+                    p.setOpacity((double)volume/127); 
                 }
             }  
         }
@@ -770,7 +771,6 @@ public class TuneComposer extends Application {
         undoAction.setDisable(false); 
         redoAction.setDisable(true); 
         
-        
         deleteAction.setDisable(true);
         
         isSaved = false; 
@@ -1069,21 +1069,13 @@ public class TuneComposer extends Application {
             p.setSelected(false); 
         }
         Collection<Playable> pastedPlayables = clipboardWrapper.popFromClipboard();  
-     
+        
         for (Playable p : pastedPlayables) {
-            notePane.getChildren().add(p.getRectangle());
-            
-            p.getRectangle().setOnMousePressed((MouseEvent pressedEvent) -> {
-                handleNoteClick(pressedEvent, p);
-                handleNotePress(pressedEvent, p);
-            });
-            p.getRectangle().setOnMouseDragged((MouseEvent dragEvent) -> {
-                handleNoteDrag(dragEvent);
-            });
-            p.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
-                handleNoteStopDragging(releaseEvent);
-            });
-          
+            if(p.isGesture()){
+                allPlayables.addAll(p.getContents());
+            }
+            notePane.getChildren().addAll(p.getNodeList()); 
+            addHandlers(p);
         }   
         PasteCommand pasteCommand = new PasteCommand(pastedPlayables); 
         commandManager.add(pasteCommand); 
@@ -1178,6 +1170,10 @@ public class TuneComposer extends Application {
         node.getRectangle().setOnMouseReleased((MouseEvent releaseEvent) -> {
             handleNoteStopDragging(releaseEvent);
         });
+        
+        node.getRectangle().setOnContextMenuRequested((ContextMenuEvent rightClickEvent)->{
+                handleRightClick(rightClickEvent, node); 
+        });
     }
     
     /**
@@ -1219,8 +1215,8 @@ public class TuneComposer extends Application {
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
         new ExtensionFilter("Text Files", "*.txt"));
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) {
+        try {
+            File selectedFile = fileChooser.showOpenDialog(stage);
             allPlayables.clear();
             notePane.getChildren().clear();
             playAction.setDisable(false); 
@@ -1233,6 +1229,8 @@ public class TuneComposer extends Application {
                 notePane.getChildren().addAll(p.getNodeList()); 
                 addHandlers(p);
             }
+        } catch (Exception e) {
+            //nothing to do
         } 
     }
     /**

@@ -54,7 +54,7 @@ public class XMLParser {
             playablesToLoad = nodesToComposition(mainList);
             return playablesToLoad;
         } catch (ParserConfigurationException e){
-        System.out.println("exception");
+
         }
         return null;
     }
@@ -75,10 +75,8 @@ public class XMLParser {
        
         }
         return null; 
-}
-    
-    
-    
+    }
+
     /**
      * Turns the given element into a gesture. Calls nodesToPlayables recursively
      * until there are no more nested gestures.
@@ -106,9 +104,11 @@ public class XMLParser {
         Instrument instrument = tempInstrument.toInstrument(note.getAttribute("instrument")); 
         Double width = Double.parseDouble(note.getAttribute("width")); 
         Boolean isSelected = Boolean.parseBoolean(note.getAttribute("isSelected")); 
+        int volume = Integer.parseInt(note.getAttribute("volume"));
         
-        Note newNote = new Note(x,y,instrument,width);
+        Note newNote = new Note(x, y, instrument, width, volume);
         newNote.setSelected(isSelected);
+        newNote.setOpacity((double)volume/127);
         return newNote; 
     }
     

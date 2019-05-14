@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -22,6 +23,7 @@ public class Gesture implements Playable {
     /**
      * Constants for the rectangle 
      */
+    private final Group rectGroup;
     private final Rectangle gestureRect;
     private double x_coord;
     private double y_coord;
@@ -74,6 +76,8 @@ public class Gesture implements Playable {
         gestureRect.getStyleClass().addAll("selected", "gesture");
         gestureRect.setMouseTransparent(false);
         
+        rectGroup = new Group(gestureRect);
+        
         isSelected = true;
         startTime = (int)x_coord;
     }
@@ -97,10 +101,17 @@ public class Gesture implements Playable {
     }
     
     /**
-     * Gets the gesture's rectangle.
+     * Gets the gesture's single rectangle.
      */
     public Rectangle getRectangle() {
         return gestureRect;
+    }
+    
+    /**
+     * Gets the gesture's rectangle group.
+     */
+    public Group getRectangles() {
+        return rectGroup;
     }
     
     /**
@@ -237,6 +248,8 @@ public class Gesture implements Playable {
      * @return true
      */
     public boolean isGesture(){return true; }
+    
+    public void setOpacity(double opacity) {}
     
     /**
      * Returns false. Eventually may be implemented to allow for editing the 

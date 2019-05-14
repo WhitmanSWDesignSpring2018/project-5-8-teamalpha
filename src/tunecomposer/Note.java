@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -21,7 +22,6 @@ public class Note implements Playable {
     /**
      * Constants for playing note in MidiPlayer
      */
-    private int volume = 127;
     private static final int MAX_PITCH = 128;
     //private static final int DEFAULT_DURATION = 100;
     private static final int TRACK = 0;
@@ -40,13 +40,16 @@ public class Note implements Playable {
     /**
      * Note fields for creating rectangle and playing note
      */
+    private final Group rectGroup;
     private final Rectangle noteRect;
+    private final Rectangle borderRect;
     private double x_coord;
     private double y_coord;
     private double rectWidth;
     private int startTime;
     private int pitch;
     private Instrument instrument;
+    private int volume = 127;
     
     /**
      * Offsets for dragging Rectangle
@@ -68,7 +71,7 @@ public class Note implements Playable {
      * @param y y-coordinate of new rectangle and pitch of note
      * @param inst instrument that the note should be played
      */
-    public Note(double x, double y, Instrument inst, double width) {
+    public Note(double x, double y, Instrument inst, double width, int vol) {
         startTime = (int) x;
         pitch = MAX_PITCH - (int) y / RECTHEIGHT;
         
@@ -79,10 +82,17 @@ public class Note implements Playable {
         rectWidth = width;
         
         noteRect = new Rectangle(x_coord, y_coord, rectWidth, RECTHEIGHT);
-        noteRect.getStyleClass().addAll("selected", instrument.toString());
+        noteRect.getStyleClass().add(instrument.toString());
         noteRect.setMouseTransparent(false);
         
+        borderRect = new Rectangle(x_coord, y_coord, rectWidth, RECTHEIGHT);
+        borderRect.getStyleClass().addAll("selected", "border-rect");
+        borderRect.setMouseTransparent(true);
+        
+        rectGroup = new Group(noteRect, borderRect);
+        
         isSelected = true;
+        volume = vol;
     }
     
     /**
@@ -109,6 +119,10 @@ public class Note implements Playable {
      */
     public Rectangle getRectangle() {
         return noteRect;
+    }
+    
+    public Group getRectangles() {
+        return rectGroup;
     }
     
     /**
@@ -144,20 +158,26 @@ public class Note implements Playable {
     public void setSelected(boolean selected) {
         isSelected = selected;
         if (selected) {
-            noteRect.getStyleClass().clear();
-            noteRect.getStyleClass().addAll("selected", 
-                                            instrument.toString());
+            borderRect.getStyleClass().clear();
+            borderRect.getStyleClass().addAll("selected", "border-rect");
         } else {
-            noteRect.getStyleClass().clear();
-            noteRect.getStyleClass().addAll("unselected", 
-                                            instrument.toString());
+            borderRect.getStyleClass().clear();
+            borderRect.getStyleClass().addAll("unselected", "border-rect");
         }
     }
     
+    /**
+     * Gets the note's volume.
+     * @return volume
+     */
     public int getVolume(){
         return volume; 
     }
     
+    /**
+     * Sets the note's volume.
+     * @param newVolume, the intended volume, 0-127
+     */
     public void setVolume(int newVolume){
         volume = newVolume; 
     }
@@ -180,6 +200,9 @@ public class Note implements Playable {
     public void moveRect(MouseEvent event) {
         noteRect.setX(event.getX() - xOffset);
         noteRect.setY(event.getY() - yOffset);
+        
+        borderRect.setX(event.getX() - xOffset);
+        borderRect.setY(event.getY() - yOffset);
     }
     
     /**
@@ -190,16 +213,7 @@ public class Note implements Playable {
     public void stopMoving(MouseEvent event) {
         double x = event.getX() - xOffset;
         double y = event.getY() - yOffset;
-        
-//        startTime = (int) x;
-//        pitch = MAX_PITCH - (int) y / RECTHEIGHT;
-//        
-//        x_coord = x;
-//        y_coord = y - (y % RECTHEIGHT);
-//        //maybe cafix the snapping up problem with integer division/rounding
-//        
-//        noteRect.setX(x_coord);
-//        noteRect.setY(y_coord);
+     
     }
     
     public void move(double XDistance, double YDistance){
@@ -214,6 +228,9 @@ public class Note implements Playable {
         
         noteRect.setX(x_coord); 
         noteRect.setY(y_coord); 
+        
+        borderRect.setX(x_coord); 
+        borderRect.setY(y_coord); 
       
     }
     
@@ -230,7 +247,8 @@ public class Note implements Playable {
         noteRect.setX(x_coord); 
         noteRect.setY(y_coord); 
         
-       
+        borderRect.setX(x_coord); 
+        borderRect.setY(y_coord); 
     }
     
     public void stretch(double xDistance){
@@ -238,6 +256,7 @@ public class Note implements Playable {
         if (rectWidth < MARGIN) rectWidth = MARGIN;
         
         noteRect.setWidth(rectWidth);
+        borderRect.setWidth(rectWidth);
     }
     
 
@@ -270,6 +289,7 @@ public class Note implements Playable {
         double tempWidth = event.getX() - x_coord + widthOffset;
         if (tempWidth < 5) tempWidth = 5;
         noteRect.setWidth(tempWidth);
+        borderRect.setWidth(tempWidth);
     }
     
     /**
@@ -282,6 +302,7 @@ public class Note implements Playable {
         if (rectWidth < MARGIN) rectWidth = MARGIN;
         
         noteRect.setWidth(rectWidth);
+        borderRect.setWidth(rectWidth);
     }
     
     /**
@@ -298,7 +319,10 @@ public class Note implements Playable {
      */
     public Collection<Playable> getContents() {return new HashSet();}
     
-    
+    /**
+     * Converts the note to an xml-format string.
+     * @return, the note as a string
+     */
     public String toString(){
         return "<note x=\"" + Double.toString(x_coord)+ "\" y=\"" + Double.toString(y_coord) 
                 + "\" instrument=\"" + instrument +"\" width=\""+ 
@@ -306,21 +330,42 @@ public class Note implements Playable {
                 + Integer.toString(volume)+ "\"/> \n";
     }
     
-    
+    /**
+     * Gets the note's instrument.
+     * @return the instrument
+     */
     public Instrument getInstrument(){
         return instrument; 
     }
     
+    /**
+     * Sets the instrument and changes the style class of the note rectangle.
+     * @param newInstrument the intended instrument
+     */
     public void setInstrument(String newInstrument){
         noteRect.getStyleClass().remove(instrument.toString());
         instrument = instrument.toInstrument(newInstrument); 
         noteRect.getStyleClass().add(instrument.toString());
     }
     
+    /**
+     * 
+     * @return 
+     */
     @Override
     public List<Rectangle> getNodeList(){
         List<Rectangle> rectList = new ArrayList<Rectangle>();
         rectList.add(this.getRectangle());
+        rectList.add(borderRect);
         return rectList;
+    }
+    
+    /**
+     * Changes the opacity of the background rectangle.
+     * @param opacity the desired opacity, 0-1
+     */
+    @Override
+    public void setOpacity(double opacity) {
+        noteRect.setOpacity(opacity);
     }
 }

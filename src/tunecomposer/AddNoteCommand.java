@@ -18,8 +18,8 @@ public class AddNoteCommand implements Undoable {
      * @param newNote, the note that the action will be able to do and undo
      */
     public AddNoteCommand(Note newNote, Collection<Playable> selectedNotes) {
-            note = newNote;
-            selectedPlayables = selectedNotes; 
+        note = newNote;
+        selectedPlayables = selectedNotes; 
     }
     
     public void execute(){
@@ -32,7 +32,7 @@ public class AddNoteCommand implements Undoable {
      */
     public void undo() {
         TuneComposer.allPlayables.remove(note);
-        note.getRectangle().setVisible(false);
+        note.getRectangles().setVisible(false);
         selectedPlayables.forEach((Playable) -> {
             Playable.setSelected(true);
         }); 
@@ -44,7 +44,7 @@ public class AddNoteCommand implements Undoable {
      */
     public void redo() {
         TuneComposer.allPlayables.add(note);
-        note.getRectangle().setVisible(true);
+        note.getRectangles().setVisible(true);
         selectedPlayables.forEach((Playable) -> {
             Playable.setSelected(false);
         }); 

@@ -25,7 +25,7 @@ public class CutCommand implements Undoable {
     
     public void undo(){
         for (Playable p : toCutPlayables) {
-            p.getRectangle().setVisible(true);
+            p.getRectangles().setVisible(true);
         }
         TuneComposer.allPlayables.addAll(toCutPlayables);
         
@@ -33,7 +33,7 @@ public class CutCommand implements Undoable {
     
     public void redo(){
         for (Playable p : toCutPlayables) {
-            p.getRectangle().setVisible(false);
+            p.getRectangles().setVisible(false);
         }
         TuneComposer.allPlayables.removeAll(toCutPlayables);
         

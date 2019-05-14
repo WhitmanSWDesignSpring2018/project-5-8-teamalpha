@@ -23,16 +23,17 @@ public class PasteCommand implements Undoable {
         redo(); 
     }
     
+    
     public void undo(){
         for (Playable p : toPastePlayables) {
-            p.getRectangle().setVisible(false);
+            p.getRectangles().setVisible(false);
         }
         TuneComposer.allPlayables.removeAll(toPastePlayables);
     }
     
     public void redo(){
         for (Playable p : toPastePlayables) {
-            p.getRectangle().setVisible(true);
+            p.getRectangles().setVisible(true);
         }
         TuneComposer.allPlayables.addAll(toPastePlayables);
     }
