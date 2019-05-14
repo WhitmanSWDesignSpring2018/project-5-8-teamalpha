@@ -17,3 +17,6 @@ The same as the "Delete" main menu item. Selecting this item deletes the selecte
 
 ### Note Names and Beats
 The names of the appropriate notes now appear in grey at the leftmost edge of the scrollpane and every 1000 pixels. There are grey vertical lines every 50 pixels to represent eighth notes.
+
+### Quantizing
+Under edit there is a "Quantize" menu item which when chosen will snap the selected playables to the beginnings of the eighth note lines. 
