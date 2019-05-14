@@ -1333,6 +1333,13 @@ public class TuneComposer extends Application {
                 noteNamesPane.getChildren().add(noteName.getName()); 
             }
         }
+        
+        for (int i = 1; i < 10000; i++) {
+            Line column = new Line(i*50, 0, i*50, 1280);
+            column.getStyleClass().add("row-divider");
+            background.getChildren().add(column);
+        }
+        
         selection = new SelectionArea(selectRect);
         deleteAction.setDisable(true);
         selectAllAction.setDisable(true);
