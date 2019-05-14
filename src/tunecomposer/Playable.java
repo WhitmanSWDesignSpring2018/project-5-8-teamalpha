@@ -7,6 +7,7 @@ package tunecomposer;
 
 import java.util.Collection;
 import java.util.List;
+import javafx.scene.Group;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
@@ -22,6 +23,8 @@ public interface Playable {
     void updateLastNote();
     
     Rectangle getRectangle();
+    
+    Group getRectangles();
     
     void schedule();
     
@@ -52,6 +55,8 @@ public interface Playable {
     void stopDuration(MouseEvent event);
     
     boolean isGesture(); 
+    
+    void setOpacity(double opacity);
     
     Collection<Playable> getContents();
     

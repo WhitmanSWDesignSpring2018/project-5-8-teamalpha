@@ -26,7 +26,7 @@ public class DeleteCommand implements Undoable {
      */
     public void undo() {
         for (Playable p : removedPlayables) {
-            p.getRectangle().setVisible(true);
+            p.getRectangles().setVisible(true);
         }
         TuneComposer.allPlayables.addAll(removedPlayables);
     }
@@ -37,7 +37,7 @@ public class DeleteCommand implements Undoable {
      */
     public void redo() {
         for (Playable p : removedPlayables) {
-            p.getRectangle().setVisible(false);
+            p.getRectangles().setVisible(false);
         }
         TuneComposer.allPlayables.removeAll(removedPlayables);
     }

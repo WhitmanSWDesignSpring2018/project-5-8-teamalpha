@@ -39,7 +39,7 @@
 }
 
 .gesture {
-	-fx-fill: transparent;
+    -fx-fill: transparent;
 }
 
 .piano {
@@ -82,11 +82,8 @@
     -fx-fill: fuchsia;
 }
 
-
-
-.no-volume {
-    -fx-background-color: white;
-    -fx-fill: white;
+.border-rect {
+    -fx-fill: transparent;
 }
 
 .note-text{
