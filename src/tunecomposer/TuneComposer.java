@@ -1087,6 +1087,24 @@ public class TuneComposer extends Application {
         saveAsAction.setDisable(false);
     }
   
+    
+    @FXML
+    private void handleQuantize(ActionEvent event) throws SAXException, IOException{
+        quantize(); 
+    }
+    
+    private void quantize(){
+        allPlayables.forEach((n) -> {
+            if (n.getSelected()) {
+                double x = n.getRectangle().getX();
+                int lowX = (int)(x - (x%25));
+                int highX = (int)(lowX + 25);
+                double roundX = (double)((x-lowX > highX-x)? highX : lowX);
+                n.move(roundX-x, 0);
+            }
+        }); 
+    }
+    
     /**
      * Opens a window displaying information about the program.
      * @param event, the about MenuItem event
