@@ -71,6 +71,8 @@
                   </MenuItem>
                   <MenuItem fx:id="pasteAction" onAction="#handlePaste" text="Paste" accelerator="Shortcut+V" >
                   </MenuItem>
+                  <MenuItem fx:id="quantizeAction" onAction="#handleQuantize" text="Quantize" >
+                  </MenuItem>
               </items>
             </Menu>
         </menus>
