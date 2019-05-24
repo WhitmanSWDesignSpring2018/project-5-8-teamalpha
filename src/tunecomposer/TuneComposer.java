@@ -1305,9 +1305,14 @@ public class TuneComposer extends Application {
             noteString = noteString + p.toString() + "\n";
         }
         noteString = "<composition> \n" + noteString + "</composition>"; 
-        filesaver.newFile(noteString,stage);
-        savedFilename = filesaver.getFilename(); 
-        isSaved = true; 
+        
+        try {
+        	filesaver.newFile(noteString,stage);
+        	savedFilename = filesaver.getFilename(); 
+        	isSaved = true; 
+        } catch (Exception e) {
+        	//do nothing
+        }
 
         saveAction.setDisable(true); 
         saveAsAction.setDisable(true);  
